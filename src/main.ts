@@ -1,4 +1,5 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
+import { InlineGraphView } from './InlineGraphView';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -10,22 +11,21 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 
 export default class InlineGraphPlugin extends Plugin {
 	settings: MyPluginSettings;
-	private localGraph: WorkspaceLeaf | null = null;
+	private graphView: InlineGraphView;
 
 	async onload() {
-        console.log('Loading Inline Graph Plugin');
-
+		console.log('Loading Inline Graph Plugin');
 		await this.loadSettings();
+		this.graphView = new InlineGraphView(this.app);
 
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Toggle Local Graph', async (evt: MouseEvent) => {
 			console.log('Toggle Local Graph clicked');
-			if (this.localGraph) {
+			if (this.graphView.isAttached()) {
 				console.log('Detaching existing graph');
-				this.localGraph.detach();
-				this.localGraph = null;
+				this.graphView.detach();
 			} else {
 				console.log('Creating new graph');
-				await this.showLocalGraph();
+				await this.graphView.show();
 			}
 		});
 		ribbonIconEl.addClass('inline-graph-ribbon-class');
@@ -69,19 +69,19 @@ export default class InlineGraphPlugin extends Plugin {
 					return true;
 				}
 			}
-		});
+		 });
 
-		 // Add command to show local graph
+		// Add command to show local graph
 		this.addCommand({
 			id: 'show-local-graph',
 			name: 'Show Local Graph',
-			callback: () => this.showLocalGraph()
+			callback: () => this.graphView.show()
 		});
 
 		// Add event listener for active leaf change
 		this.registerEvent(
 			this.app.workspace.on('active-leaf-change', () => {
-				this.updateLocalGraph();
+				this.graphView.updateGraph();
 			})
 		);
 
@@ -98,46 +98,9 @@ export default class InlineGraphPlugin extends Plugin {
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
-	async showLocalGraph() {
-		try {
-			if (!this.localGraph) {
-				new Notice('Creating Local Graph...');
-				this.localGraph = this.app.workspace.getRightLeaf(true);
-				await this.localGraph.setViewState({
-					type: 'localgraph',
-					state: {}
-				});
-				
-				this.app.workspace.revealLeaf(this.localGraph);
-				await this.updateLocalGraph();
-				
-				new Notice('Local Graph created successfully');
-			}
-		} catch (error) {
-			console.error('Error showing local graph:', error);
-			new Notice('Failed to create Local Graph: ' + error.message);
-		}
-	}
-
-	async updateLocalGraph() {
-		if (this.localGraph) {
-			const activeFile = this.app.workspace.getActiveFile();
-			if (activeFile) {
-				await this.localGraph.setViewState({
-					type: 'localgraph',
-					state: {
-						file: activeFile.path,
-					}
-				});
-			}
-		}
-	}
-
 	onunload() {
-        console.log('Unloading Inline Graph Plugin');
-		if (this.localGraph) {
-			this.localGraph.detach();
-		}
+		console.log('Unloading Inline Graph Plugin');
+		this.graphView.detach();
 	}
 
 	async loadSettings() {
