@@ -1,6 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-
-// Remember to rename these classes and interfaces!
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -12,17 +10,25 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 
 export default class InlineGraphPlugin extends Plugin {
 	settings: MyPluginSettings;
+	private localGraph: WorkspaceLeaf | null = null;
 
 	async onload() {
+        console.log('Loading Inline Graph Plugin');
+
 		await this.loadSettings();
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice from Inline Graph!!');
+		const ribbonIconEl = this.addRibbonIcon('dice', 'Toggle Local Graph', async (evt: MouseEvent) => {
+			console.log('Toggle Local Graph clicked');
+			if (this.localGraph) {
+				console.log('Detaching existing graph');
+				this.localGraph.detach();
+				this.localGraph = null;
+			} else {
+				console.log('Creating new graph');
+				await this.showLocalGraph();
+			}
 		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
+		ribbonIconEl.addClass('inline-graph-ribbon-class');
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
@@ -65,6 +71,20 @@ export default class InlineGraphPlugin extends Plugin {
 			}
 		});
 
+		 // Add command to show local graph
+		this.addCommand({
+			id: 'show-local-graph',
+			name: 'Show Local Graph',
+			callback: () => this.showLocalGraph()
+		});
+
+		// Add event listener for active leaf change
+		this.registerEvent(
+			this.app.workspace.on('active-leaf-change', () => {
+				this.updateLocalGraph();
+			})
+		);
+
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
@@ -78,8 +98,46 @@ export default class InlineGraphPlugin extends Plugin {
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
-	onunload() {
+	async showLocalGraph() {
+		try {
+			if (!this.localGraph) {
+				new Notice('Creating Local Graph...');
+				this.localGraph = this.app.workspace.getRightLeaf(true);
+				await this.localGraph.setViewState({
+					type: 'localgraph',
+					state: {}
+				});
+				
+				this.app.workspace.revealLeaf(this.localGraph);
+				await this.updateLocalGraph();
+				
+				new Notice('Local Graph created successfully');
+			}
+		} catch (error) {
+			console.error('Error showing local graph:', error);
+			new Notice('Failed to create Local Graph: ' + error.message);
+		}
+	}
 
+	async updateLocalGraph() {
+		if (this.localGraph) {
+			const activeFile = this.app.workspace.getActiveFile();
+			if (activeFile) {
+				await this.localGraph.setViewState({
+					type: 'localgraph',
+					state: {
+						file: activeFile.path,
+					}
+				});
+			}
+		}
+	}
+
+	onunload() {
+        console.log('Unloading Inline Graph Plugin');
+		if (this.localGraph) {
+			this.localGraph.detach();
+		}
 	}
 
 	async loadSettings() {
