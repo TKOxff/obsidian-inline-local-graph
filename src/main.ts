@@ -29,7 +29,7 @@ export default class InlineGraphPlugin extends Plugin {
 
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Toggle Inline local graph', async (evt: MouseEvent) => {
 			console.log('Toggle Local Graph clicked');
-			this.showGraphInEditor();
+			this.showInlineGraphInEditor();
 		});
 		ribbonIconEl.addClass('inline-graph-ribbon-class');
 
@@ -37,78 +37,60 @@ export default class InlineGraphPlugin extends Plugin {
 		this.addCommand({
 			id: 'show-local-graph',
 			name: 'Show Local Graph',
-			callback: () => this.showGraphInEditor()
+			callback: () => this.showInlineGraphInEditor()
 		});
 
 		// 활성 리프 변경 시 그래프 업데이트
 		this.registerEvent(
 			this.app.workspace.on('active-leaf-change', () => {
-				this.showGraphInEditor();
+				// 활성 파일이 변경될 때 그래프를 즉시 렌더링/업데이트합니다.
+				this.showInlineGraphInEditor();
 			})
 		);
 
-		this.registerMarkdownPostProcessor((el, ctx) => {
-			// 이미 그래프 컨테이너가 있으면 중복 삽입 방지
-			if (el.querySelector('.inline-graph-container')) return;
-
-			// el이 노트 전체 컨테이너인지 확인 (markdown-preview-section이 여러 개일 수 있음)
-			const isFullNote = el.parentElement && (
-				el.parentElement.classList.contains('markdown-preview-view') ||
-				el.parentElement.classList.contains('markdown-reading-view')
-			);
-			if (!isFullNote) return;
-
-			// 본문 마지막에만 그래프 컨테이너 추가
-			const graphContainer = document.createElement('div');
-			graphContainer.className = 'inline-graph-container';
-			graphContainer.style.marginTop = '2em';
-			el.appendChild(graphContainer);
-
-			this.graphView.renderTo(graphContainer);
-		});
-
-		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
+		// MarkdownPostProcessor는 add/update 로직이 showGraphInEditor로 통합되면서 제거합니다.
 	}
 
-	// 노트 본문 하단에 그래프 표시
-	showGraphInEditor() {
-		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (!view) {
-			new Notice('마크다운 뷰가 활성화되어 있지 않습니다.');
+	showInlineGraphInEditor() {
+		const activeLeaf = this.app.workspace.activeLeaf;
+		if (!activeLeaf || !(activeLeaf.view instanceof MarkdownView)) {
+			// 현재 활성 뷰가 마크다운 뷰가 아니면 조용히 종료
 			return;
 		}
 
-		// 읽기 모드(프리뷰) 본문 내부를 찾음
-		const previewSection = view.contentEl.querySelector('.markdown-preview-section') as HTMLElement | null;
-		let graphContainer: HTMLElement | null = null;
-
-		if (previewSection) {
-			graphContainer = previewSection.querySelector('.inline-graph-container') as HTMLElement | null;
-			if (!graphContainer) {
-				graphContainer = document.createElement('div');
-				graphContainer.className = 'inline-graph-container';
-				graphContainer.style.marginTop = '2em';
-				previewSection.appendChild(graphContainer);
-				console.log('Graph container created in preview section');
-			} else {
-				console.log('Graph container already exists in preview section');
-			}
-		} else {
-			// fallback: 기존 방식
-			graphContainer = view.contentEl.querySelector('.inline-graph-container') as HTMLElement | null;
-			if (!graphContainer) {
-				graphContainer = document.createElement('div');
-				graphContainer.className = 'inline-graph-container';
-				graphContainer.style.marginTop = '2em';
-				view.contentEl.appendChild(graphContainer);
-				console.log('Graph container created in contentEl');
-			} else {
-				console.log('Graph container already exists in contentEl');
-			}
+		const view = activeLeaf.view;
+		// 읽기 모드(preview)일 때만 그래프를 추가/갱신합니다.
+		if (view.getMode() !== 'preview') {
+			return;
 		}
 
-		this.graphView.renderTo(graphContainer as HTMLElement);
-		console.log('renderTo called')
+		const previewView = view.contentEl.querySelector('.markdown-preview-view');
+		if (!previewView) return; // 미리보기 DOM이 아직 준비되지 않음
+
+		let graphContainer = previewView.querySelector('.inline-graph-container') as HTMLElement;
+
+		// 그래프 컨테이너가 없으면 새로 생성하여 본문 하단에 추가합니다.
+		if (!graphContainer) {
+			graphContainer = document.createElement('div');
+			graphContainer.className = 'inline-graph-container';
+			graphContainer.style.marginTop = '2em';
+			previewView.appendChild(graphContainer);
+		}
+
+		// 그래프를 렌더링합니다.
+		this.graphView.renderTo(graphContainer);
+	}
+
+	updateGraphs() {
+		// 모든 열린 마크다운 뷰에 대해 그래프를 업데이트합니다.
+		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
+			if (leaf.view instanceof MarkdownView) {
+				const activeLeaf = this.app.workspace.activeLeaf;
+				this.app.workspace.activeLeaf = leaf;
+				this.showInlineGraphInEditor();
+				this.app.workspace.activeLeaf = activeLeaf;
+			}
+		});
 	}
 
 	onunload() {
