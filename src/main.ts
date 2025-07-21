@@ -27,11 +27,23 @@ export default class InlineGraphPlugin extends Plugin {
 		// 생성 시점에 getSettings 함수 전달
 		this.graphView = new InlineGraphView(this.app, () => this.settings);
 
-		// 활성 리프 변경 시 그래프 업데이트
+		// 다른 노트를 클릭할 때마다 그래프를 자동으로 표시/업데이트합니다.
 		this.registerEvent(
 			this.app.workspace.on('active-leaf-change', () => {
-				// 활성 파일이 변경될 때 그래프를 즉시 렌더링/업데이트합니다.
-				this.showInlineGraphInEditor();
+				// 뷰의 상태가 완전히 업데이트될 시간을 주기 위해 약간의 지연을 둡니다.
+				setTimeout(() => {
+					this.showInlineGraphInEditor();
+				}, 100);
+			})
+		);
+
+		// 모드 변경(편집/읽기 토글) 시에도 그래프를 다시 그리도록 합니다.
+		this.registerEvent(
+			this.app.workspace.on('layout-change', () => {
+				// 뷰의 상태가 완전히 업데이트될 시간을 주기 위해 약간의 지연을 둡니다.
+				setTimeout(() => {
+					this.showInlineGraphInEditor();
+				}, 100);
 			})
 		);
 
@@ -53,26 +65,31 @@ export default class InlineGraphPlugin extends Plugin {
 	}
 
 	showInlineGraphInEditor() {
+		console.log("showInlineGraphInEditor Begin")
+
 		const activeLeaf = this.app.workspace.activeLeaf;
 		if (!activeLeaf || !(activeLeaf.view instanceof MarkdownView)) {
+			console.log("showInlineGraphInEditor - Not a markdown view")
 			return; // Not a markdown view
 		}
 		const view = activeLeaf.view;
-		if (view.getMode() !== 'preview') {
-			return; // Only show in preview mode
+		// 편집 모드에서도 그래프를 표시하도록 getMode() 체크를 제거합니다.
+
+		// 읽기 모드(.markdown-preview-sizer)와 편집 모드(.cm-sizer)의 컨테이너를 모두 찾습니다.
+		const sizer = view.contentEl.querySelector('.markdown-preview-sizer');
+		if (!sizer) {
+			// console.log("Sizer not found");
+			return;
 		}
 
-		const previewView = view.contentEl.querySelector('.markdown-preview-sizer');
-		if (!previewView) return;
-
-		let graphContainer = previewView.querySelector('.inline-graph-container') as HTMLElement;
+		let graphContainer = sizer.querySelector('.inline-graph-container') as HTMLElement;
 
 		// 그래프 컨테이너가 없으면 새로 생성하여 본문 하단에 추가합니다.
 		if (!graphContainer) {
 			graphContainer = document.createElement('div');
 			graphContainer.className = 'inline-graph-container';
 			graphContainer.style.marginTop = '2em';
-			previewView.appendChild(graphContainer);
+			sizer.appendChild(graphContainer);
 		}
 		this.graphView.renderTo(graphContainer);
 	}
