@@ -26,6 +26,7 @@ export class InlineGraphView {
         const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
         // 역링크 정보
         const backlinks = this.app.metadataCache.getBacklinksForFile(activeFile);
+        // console.log("Backlinks data:", backlinks); // 데이터 확인용 로그
 
         // 노드/엣지 데이터 생성
         const nodeSet = new Set<string>();
@@ -47,14 +48,16 @@ export class InlineGraphView {
             idToPath[targetName] = target;
         }
         // 역링크(인커밍)
-        for (const source in backlinks.data) {
+        for (const source of backlinks.data.keys()) {
             const sourceName = source.split('/').pop()?.replace('.md', '') || source;
+            console.log("backlinks sourceName:", sourceName);
             if (!nodeSet.has(sourceName)) {
                 nodes.push({ id: sourceName, label: sourceName });
                 nodeSet.add(sourceName);
             }
             edges.push({ from: sourceName, to: activeId });
             idToPath[sourceName] = source;
+            // console.log("backlinks sourceName:", sourceName);
         }
 
         // 플러그인 설정에서 showArrows 값 가져오기

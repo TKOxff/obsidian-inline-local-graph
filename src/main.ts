@@ -32,9 +32,9 @@ export default class InlineGraphPlugin extends Plugin {
 		// 다른 노트를 클릭할 때마다 그래프를 자동으로 표시/업데이트합니다.
 		this.registerEvent(
 			this.app.workspace.on('active-leaf-change', () => {
-				// 뷰의 상태가 완전히 업데이트될 시간을 주기 위해 약간의 지연을 둡니다.
+				// 메타데이터 캐시가 업데이트될 시간을 확보하기 위해 지연을 줍니다.
 				setTimeout(() => {
-					this.showInlineGraphInEditor();
+					this.toggleInlineGraphInEditor();
 				}, 100);
 			})
 		);
