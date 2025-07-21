@@ -51,7 +51,14 @@ export default class InlineGraphPlugin extends Plugin {
 			// 이미 그래프 컨테이너가 있으면 중복 삽입 방지
 			if (el.querySelector('.inline-graph-container')) return;
 
-			// 본문 마지막에 그래프 컨테이너 추가
+			// el이 노트 전체 컨테이너인지 확인 (markdown-preview-section이 여러 개일 수 있음)
+			const isFullNote = el.parentElement && (
+				el.parentElement.classList.contains('markdown-preview-view') ||
+				el.parentElement.classList.contains('markdown-reading-view')
+			);
+			if (!isFullNote) return;
+
+			// 본문 마지막에만 그래프 컨테이너 추가
 			const graphContainer = document.createElement('div');
 			graphContainer.className = 'inline-graph-container';
 			graphContainer.style.marginTop = '2em';
