@@ -69,7 +69,15 @@ export class InlineGraphView {
         const data = { nodes, edges };
         const options = {
             nodes: { shape: 'ellipse', color: nodeBgColor, font: { color: '#fff' } },
-            edges: { color: '#aaa', arrows: showArrows ? { to: { enabled: true } } : { to: { enabled: false } } },
+            edges: { 
+                color: '#aaa', 
+                arrows: {
+                    to: { 
+                        enabled: showArrows,
+                        scaleFactor: 0.5 
+                    }
+                }
+            },
             layout: { improvedLayout: true },
             physics: { enabled: true }
         };
