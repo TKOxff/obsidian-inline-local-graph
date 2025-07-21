@@ -3,6 +3,7 @@ import InlineGraphPlugin from './main';
 
 export class InlineGraphSettingTab extends PluginSettingTab {
 	plugin: InlineGraphPlugin;
+	nodeBgColor: string;
 
 	constructor(app: App, plugin: InlineGraphPlugin) {
 		super(app, plugin);
@@ -15,17 +16,6 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl)
 			.setName('Show arrows on edges')
 			.setDesc('Toggle arrow display on graph edges')
 			.addToggle(toggle => toggle
@@ -35,5 +25,18 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 					this.plugin.showGraphInEditor(); // 즉시 갱신
 				}));
+
+		new Setting(containerEl)
+			.setName('Node background color')
+			.setDesc('Set the background color of graph nodes')
+			.addText(text => text
+				.setValue(this.plugin.settings.nodeBgColor)
+				.setPlaceholder('#888888')
+				.onChange(async (value) => {
+					this.plugin.settings.nodeBgColor = value;
+					await this.plugin.saveSettings();
+					this.plugin.showGraphInEditor();
+				})
+			.inputEl.setAttribute('type', 'color'));
 	}
 } 

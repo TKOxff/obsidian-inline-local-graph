@@ -7,11 +7,13 @@ import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 interface MyPluginSettings {
 	mySetting: string;
     showArrows: boolean;
+    nodeBgColor: string;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default',
-    showArrows: true
+    showArrows: true,
+    nodeBgColor: '#888888'
 }
 
 export default class InlineGraphPlugin extends Plugin {
@@ -63,14 +65,11 @@ export default class InlineGraphPlugin extends Plugin {
 
 	// 노트 본문 하단에 그래프 표시
 	showGraphInEditor() {
-		new Notice('Trying to show graph in editor');
-
 		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 		if (!view) {
 			new Notice('마크다운 뷰가 활성화되어 있지 않습니다.');
 			return;
 		}
-		new Notice('view is Valid');
 
 		// 읽기 모드(프리뷰) 본문 내부를 찾음
 		const previewSection = view.contentEl.querySelector('.markdown-preview-section') as HTMLElement | null;

@@ -106,12 +106,13 @@ export class InlineGraphView {
 
         // 플러그인 설정에서 showArrows 값 가져오기
         const showArrows = this.getSettings().showArrows ?? true;
+        const nodeBgColor = this.getSettings().nodeBgColor ?? '#888888';
         console.log('showArrows:', showArrows);
 
         // vis-network로 그래프 렌더링
         const data = { nodes, edges };
         const options = {
-            nodes: { shape: 'ellipse', color: '#888', font: { color: '#fff' } },
+            nodes: { shape: 'ellipse', color: nodeBgColor, font: { color: '#fff' } },
             edges: { color: '#aaa', arrows: showArrows ? { to: { enabled: true } } : { to: { enabled: false } } },
             layout: { improvedLayout: true },
             physics: { enabled: true }
