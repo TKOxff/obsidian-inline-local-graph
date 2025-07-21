@@ -8,12 +8,14 @@ interface MyPluginSettings {
 	mySetting: string;
     showArrows: boolean;
     nodeBgColor: string;
+    showGraphBorder: boolean;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default',
     showArrows: true,
-    nodeBgColor: '#888888'
+    nodeBgColor: '#888888',
+    showGraphBorder: true,
 }
 
 export default class InlineGraphPlugin extends Plugin {
@@ -85,18 +87,28 @@ export default class InlineGraphPlugin extends Plugin {
 		}
 
 		if (!parentEl) {
+			console.log("showInlineGraphInEditor Not found parentEl");
 			return;
 		}
 
 		// Check if graph container already exists to avoid duplication
-		let graphContainer = parentEl.querySelector('.inline-graph-container');
+		let graphContainer = parentEl.querySelector('.inline-graph-container') as HTMLElement | null;
 		if (!graphContainer) {
 			graphContainer = document.createElement('div');
 			graphContainer.className = 'inline-graph-container';
-			graphContainer.style.marginTop = '2em';
 			parentEl.appendChild(graphContainer);
 		}
 
+		// Apply styles based on settings
+		graphContainer.style.marginTop = '2em';
+		if (this.settings.showGraphBorder) {
+			graphContainer.style.border = '1px solid #888';
+			graphContainer.style.padding = '1em';
+		} else {
+			graphContainer.style.border = 'none';
+			graphContainer.style.padding = '0';
+		}
+		
 		this.graphView.renderTo(graphContainer as HTMLElement);
 	}
 

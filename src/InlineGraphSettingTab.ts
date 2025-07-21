@@ -47,5 +47,16 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 					this.plugin.updateGraphs();
 				})
 			.inputEl.setAttribute('type', 'color'));
+
+		new Setting(containerEl)
+			.setName('Show graph border')
+			.setDesc('Toggle the border around the graph container')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showGraphBorder)
+				.onChange(async (value) => {
+					this.plugin.settings.showGraphBorder = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateGraphs();
+				}));
 	}
 } 
