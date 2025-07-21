@@ -48,6 +48,7 @@ export default class InlineGraphPlugin extends Plugin {
 			callback: () => this.showInlineGraphInEditor()
 		});
 
+		// 설정 탭 추가
 		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
 	}
 
@@ -61,7 +62,7 @@ export default class InlineGraphPlugin extends Plugin {
 			return; // Only show in preview mode
 		}
 
-		const previewView = view.contentEl.querySelector('.markdown-preview-view');
+		const previewView = view.contentEl.querySelector('.markdown-preview-sizer');
 		if (!previewView) return;
 
 		let graphContainer = previewView.querySelector('.inline-graph-container') as HTMLElement;
