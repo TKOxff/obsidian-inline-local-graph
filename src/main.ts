@@ -2,8 +2,7 @@ import { App, Plugin, WorkspaceLeaf } from 'obsidian';
 import { InlineGraphView } from './InlineGraphView';
 import { MarkdownView } from 'obsidian';
 import { Notice } from 'obsidian';
-import { PluginSettingTab } from 'obsidian';
-import { Setting } from 'obsidian';
+import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -59,7 +58,7 @@ export default class InlineGraphPlugin extends Plugin {
 			this.graphView.renderTo(graphContainer);
 		});
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
 	}
 
 	// 노트 본문 하단에 그래프 표시
@@ -122,42 +121,5 @@ export default class InlineGraphPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-}
-
-class SampleSettingTab extends PluginSettingTab {
-	plugin: InlineGraphPlugin;
-
-	constructor(app: App, plugin: InlineGraphPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const {containerEl} = this;
-
-		containerEl.empty();
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
-
-        new Setting(containerEl)
-            .setName('Show arrows on edges')
-            .setDesc('Toggle arrow display on graph edges')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.showArrows)
-                .onChange(async (value) => {
-                    this.plugin.settings.showArrows = value;
-                    await this.plugin.saveSettings();
-					this.plugin.showGraphInEditor(); // 즉시 갱신
-                }));
 	}
 }
