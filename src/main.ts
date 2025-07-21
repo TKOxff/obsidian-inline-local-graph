@@ -2,13 +2,17 @@ import { App, Plugin, WorkspaceLeaf } from 'obsidian';
 import { InlineGraphView } from './InlineGraphView';
 import { MarkdownView } from 'obsidian';
 import { Notice } from 'obsidian';
+import { PluginSettingTab } from 'obsidian';
+import { Setting } from 'obsidian';
 
 interface MyPluginSettings {
 	mySetting: string;
+    showArrows: boolean;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	mySetting: 'default',
+    showArrows: true
 }
 
 export default class InlineGraphPlugin extends Plugin {
@@ -19,7 +23,8 @@ export default class InlineGraphPlugin extends Plugin {
 		console.log('Loading Inline Graph Plugin');
 
 		await this.loadSettings();
-		this.graphView = new InlineGraphView(this.app);
+		// 생성 시점에 getSettings 함수 전달
+		this.graphView = new InlineGraphView(this.app, () => this.settings);
 
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Toggle Inline local graph', async (evt: MouseEvent) => {
 			console.log('Toggle Local Graph clicked');
@@ -53,6 +58,8 @@ export default class InlineGraphPlugin extends Plugin {
 
 			this.graphView.renderTo(graphContainer);
 		});
+
+		this.addSettingTab(new SampleSettingTab(this.app, this));
 	}
 
 	// 노트 본문 하단에 그래프 표시
@@ -115,5 +122,42 @@ export default class InlineGraphPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+}
+
+class SampleSettingTab extends PluginSettingTab {
+	plugin: InlineGraphPlugin;
+
+	constructor(app: App, plugin: InlineGraphPlugin) {
+		super(app, plugin);
+		this.plugin = plugin;
+	}
+
+	display(): void {
+		const {containerEl} = this;
+
+		containerEl.empty();
+
+		new Setting(containerEl)
+			.setName('Setting #1')
+			.setDesc('It\'s a secret')
+			.addText(text => text
+				.setPlaceholder('Enter your secret')
+				.setValue(this.plugin.settings.mySetting)
+				.onChange(async (value) => {
+					this.plugin.settings.mySetting = value;
+					await this.plugin.saveSettings();
+				}));
+
+        new Setting(containerEl)
+            .setName('Show arrows on edges')
+            .setDesc('Toggle arrow display on graph edges')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showArrows)
+                .onChange(async (value) => {
+                    this.plugin.settings.showArrows = value;
+                    await this.plugin.saveSettings();
+					this.plugin.showGraphInEditor(); // 즉시 갱신
+                }));
 	}
 }

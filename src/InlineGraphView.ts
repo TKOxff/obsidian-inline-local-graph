@@ -5,7 +5,7 @@ import { Network } from 'vis-network/standalone';
 export class InlineGraphView {
     private leaf: WorkspaceLeaf | null = null;
 
-    constructor(private app: any) {}
+    constructor(private app: any, private getSettings: () => any) {}
 
     async show() {
         try {
@@ -71,6 +71,7 @@ export class InlineGraphView {
 
         // 링크 정보
         const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
+        // 역링크 정보
         const backlinks = this.app.metadataCache.getBacklinksForFile(activeFile);
 
         // 노드/엣지 데이터 생성
@@ -103,11 +104,15 @@ export class InlineGraphView {
             idToPath[sourceName] = source;
         }
 
+        // 플러그인 설정에서 showArrows 값 가져오기
+        const showArrows = this.getSettings().showArrows ?? true;
+        console.log('showArrows:', showArrows);
+
         // vis-network로 그래프 렌더링
         const data = { nodes, edges };
         const options = {
             nodes: { shape: 'ellipse', color: '#888', font: { color: '#fff' } },
-            edges: { color: '#aaa', arrows: 'to' },
+            edges: { color: '#aaa', arrows: showArrows ? { to: { enabled: true } } : { to: { enabled: false } } },
             layout: { improvedLayout: true },
             physics: { enabled: true }
         };
