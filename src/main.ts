@@ -1,6 +1,5 @@
-import { App, Plugin, WorkspaceLeaf } from 'obsidian';
+import { App, Plugin, debounce, MarkdownView } from 'obsidian';
 import { InlineGraphView } from './InlineGraphView';
-import { MarkdownView } from 'obsidian';
 import { Notice } from 'obsidian';
 import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
@@ -21,34 +20,24 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 export default class InlineGraphPlugin extends Plugin {
 	settings: MyPluginSettings;
 	private graphView: InlineGraphView;
+	private observer: MutationObserver;
 
 	async onload() {
 		console.log('Loading Inline Graph Plugin');
 
 		await this.loadSettings();
-		// 생성 시점에 getSettings 함수 전달
 		this.graphView = new InlineGraphView(this.app, () => this.settings);
 
-		// 다른 노트를 클릭할 때마다 그래프를 자동으로 표시/업데이트합니다.
-		this.registerEvent(
-			this.app.workspace.on('active-leaf-change', () => {
-				// 메타데이터 캐시가 업데이트될 시간을 확보하기 위해 지연을 줍니다.
-				setTimeout(() => {
-					this.toggleInlineGraphInEditor();
-				}, 100);
-			})
-		);
+		// 모든 UI 변경을 안정적으로 감지하기 위해 MutationObserver를 사용합니다.
+		const debouncedUpdate = debounce(() => {
+			this.observer.disconnect(); // 루프 방지를 위해 감시 중단
+			this.showInlineGraphInEditor();
+			this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true }); // 감시 재시작
+		}, 300);
 
-		// 모드 변경(편집/읽기 토글) 시에도 그래프를 다시 그리도록 합니다.
-		this.registerEvent(
-			this.app.workspace.on('layout-change', () => {
-				// 뷰의 상태가 완전히 업데이트될 시간을 주기 위해 약간의 지연을 둡니다.
-				setTimeout(() => {
-					this.showInlineGraphInEditor();
-				}, 100);
-			})
-		);
-
+		this.observer = new MutationObserver(debouncedUpdate);
+		this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true });
+		
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Toggle Inline local graph', async (evt: MouseEvent) => {
 			console.log('Toggle Local Graph clicked');
 			this.toggleInlineGraphInEditor();
@@ -148,7 +137,16 @@ export default class InlineGraphPlugin extends Plugin {
 
 	onunload() {
 		console.log('Unloading Inline Graph Plugin');
-		this.removeInlineGraphInEditor();
+		this.observer.disconnect(); // 감시자 정리
+		// 플러그인 비활성화 시 모든 그래프 제거
+		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
+			if (leaf.view instanceof MarkdownView) {
+				const container = leaf.view.contentEl.querySelector('.inline-graph-container');
+				if (container) {
+					container.remove();
+				}
+			}
+		});
 	}
 
 	async loadSettings() {
