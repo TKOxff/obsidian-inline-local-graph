@@ -1,5 +1,7 @@
 import { App, Plugin, WorkspaceLeaf } from 'obsidian';
 import { InlineGraphView } from './InlineGraphView';
+import { MarkdownView } from 'obsidian';
+import { Notice } from 'obsidian';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -15,18 +17,13 @@ export default class InlineGraphPlugin extends Plugin {
 
 	async onload() {
 		console.log('Loading Inline Graph Plugin');
+
 		await this.loadSettings();
 		this.graphView = new InlineGraphView(this.app);
 
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Toggle Inline local graph', async (evt: MouseEvent) => {
 			console.log('Toggle Local Graph clicked');
-			if (this.graphView.isAttached()) {
-				console.log('Detaching existing graph');
-				this.graphView.detach();
-			} else {
-				console.log('Creating new graph');
-				await this.graphView.show();
-			}
+			this.showGraphInEditor();
 		});
 		ribbonIconEl.addClass('inline-graph-ribbon-class');
 
@@ -34,20 +31,82 @@ export default class InlineGraphPlugin extends Plugin {
 		this.addCommand({
 			id: 'show-local-graph',
 			name: 'Show Local Graph',
-			callback: () => this.graphView.show()
+			callback: () => this.showGraphInEditor()
 		});
 
 		// 활성 리프 변경 시 그래프 업데이트
 		this.registerEvent(
 			this.app.workspace.on('active-leaf-change', () => {
-				this.graphView.updateGraph();
+				this.showGraphInEditor();
 			})
 		);
+
+		this.registerMarkdownPostProcessor((el, ctx) => {
+			// 이미 그래프 컨테이너가 있으면 중복 삽입 방지
+			if (el.querySelector('.inline-graph-container')) return;
+
+			// 본문 마지막에 그래프 컨테이너 추가
+			const graphContainer = document.createElement('div');
+			graphContainer.className = 'inline-graph-container';
+			graphContainer.style.marginTop = '2em';
+			el.appendChild(graphContainer);
+
+			this.graphView.renderTo(graphContainer);
+		});
+	}
+
+	// 노트 본문 하단에 그래프 표시
+	showGraphInEditor() {
+		new Notice('Trying to show graph in editor');
+
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (!view) {
+			new Notice('마크다운 뷰가 활성화되어 있지 않습니다.');
+			return;
+		}
+		new Notice('view is Valid');
+
+		// 읽기 모드(프리뷰) 본문 내부를 찾음
+		const previewSection = view.contentEl.querySelector('.markdown-preview-section') as HTMLElement | null;
+		let graphContainer: HTMLElement | null = null;
+
+		if (previewSection) {
+			graphContainer = previewSection.querySelector('.inline-graph-container') as HTMLElement | null;
+			if (!graphContainer) {
+				graphContainer = document.createElement('div');
+				graphContainer.className = 'inline-graph-container';
+				graphContainer.style.marginTop = '2em';
+				previewSection.appendChild(graphContainer);
+				console.log('Graph container created in preview section');
+			} else {
+				console.log('Graph container already exists in preview section');
+			}
+		} else {
+			// fallback: 기존 방식
+			graphContainer = view.contentEl.querySelector('.inline-graph-container') as HTMLElement | null;
+			if (!graphContainer) {
+				graphContainer = document.createElement('div');
+				graphContainer.className = 'inline-graph-container';
+				graphContainer.style.marginTop = '2em';
+				view.contentEl.appendChild(graphContainer);
+				console.log('Graph container created in contentEl');
+			} else {
+				console.log('Graph container already exists in contentEl');
+			}
+		}
+
+		this.graphView.renderTo(graphContainer as HTMLElement);
+		console.log('renderTo called')
 	}
 
 	onunload() {
+		// 본문 그래프 컨테이너 제거
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (view) {
+			const graphContainer = view.contentEl.querySelector('.inline-graph-container');
+			if (graphContainer) graphContainer.remove();
+		}
 		console.log('Unloading Inline Graph Plugin');
-		this.graphView.detach();
 	}
 
 	async loadSettings() {
