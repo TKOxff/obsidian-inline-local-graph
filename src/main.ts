@@ -27,6 +27,14 @@ export default class InlineGraphPlugin extends Plugin {
 		// 생성 시점에 getSettings 함수 전달
 		this.graphView = new InlineGraphView(this.app, () => this.settings);
 
+		// 활성 리프 변경 시 그래프 업데이트
+		this.registerEvent(
+			this.app.workspace.on('active-leaf-change', () => {
+				// 활성 파일이 변경될 때 그래프를 즉시 렌더링/업데이트합니다.
+				this.showInlineGraphInEditor();
+			})
+		);
+
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Toggle Inline local graph', async (evt: MouseEvent) => {
 			console.log('Toggle Local Graph clicked');
 			this.showInlineGraphInEditor();
@@ -40,32 +48,21 @@ export default class InlineGraphPlugin extends Plugin {
 			callback: () => this.showInlineGraphInEditor()
 		});
 
-		// 활성 리프 변경 시 그래프 업데이트
-		this.registerEvent(
-			this.app.workspace.on('active-leaf-change', () => {
-				// 활성 파일이 변경될 때 그래프를 즉시 렌더링/업데이트합니다.
-				this.showInlineGraphInEditor();
-			})
-		);
-
-		// MarkdownPostProcessor는 add/update 로직이 showGraphInEditor로 통합되면서 제거합니다.
+		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
 	}
 
 	showInlineGraphInEditor() {
 		const activeLeaf = this.app.workspace.activeLeaf;
 		if (!activeLeaf || !(activeLeaf.view instanceof MarkdownView)) {
-			// 현재 활성 뷰가 마크다운 뷰가 아니면 조용히 종료
-			return;
+			return; // Not a markdown view
 		}
-
 		const view = activeLeaf.view;
-		// 읽기 모드(preview)일 때만 그래프를 추가/갱신합니다.
 		if (view.getMode() !== 'preview') {
-			return;
+			return; // Only show in preview mode
 		}
 
 		const previewView = view.contentEl.querySelector('.markdown-preview-view');
-		if (!previewView) return; // 미리보기 DOM이 아직 준비되지 않음
+		if (!previewView) return;
 
 		let graphContainer = previewView.querySelector('.inline-graph-container') as HTMLElement;
 
@@ -76,13 +73,10 @@ export default class InlineGraphPlugin extends Plugin {
 			graphContainer.style.marginTop = '2em';
 			previewView.appendChild(graphContainer);
 		}
-
-		// 그래프를 렌더링합니다.
 		this.graphView.renderTo(graphContainer);
 	}
 
 	updateGraphs() {
-		// 모든 열린 마크다운 뷰에 대해 그래프를 업데이트합니다.
 		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
 			if (leaf.view instanceof MarkdownView) {
 				const activeLeaf = this.app.workspace.activeLeaf;

@@ -15,6 +15,15 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
+		console.log("Displaying settings tab. Plugin instance:", this.plugin);
+		console.log("Plugin settings:", this.plugin.settings);
+
+		if (!this.plugin.settings) {
+			console.error("Plugin settings are not loaded!");
+			containerEl.createEl('p', { text: 'Error: Plugin settings could not be loaded. Please try reloading the plugin.' });
+			return;
+		}
+
 		new Setting(containerEl)
 			.setName('Show arrows on edges')
 			.setDesc('Toggle arrow display on graph edges')
@@ -23,7 +32,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.showArrows = value;
 					await this.plugin.saveSettings();
-					this.plugin.showGraphInEditor(); // 즉시 갱신
+					this.plugin.updateGraphs(); // 즉시 갱신
 				}));
 
 		new Setting(containerEl)
@@ -35,7 +44,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.nodeBgColor = value;
 					await this.plugin.saveSettings();
-					this.plugin.showGraphInEditor();
+					this.plugin.updateGraphs();
 				})
 			.inputEl.setAttribute('type', 'color'));
 	}
