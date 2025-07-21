@@ -51,7 +51,7 @@ export default class InlineGraphPlugin extends Plugin {
 
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Toggle Inline local graph', async (evt: MouseEvent) => {
 			console.log('Toggle Local Graph clicked');
-			this.showInlineGraphInEditor();
+			this.toggleInlineGraphInEditor();
 		});
 		ribbonIconEl.addClass('inline-graph-ribbon-class');
 
@@ -112,6 +112,29 @@ export default class InlineGraphPlugin extends Plugin {
 		this.graphView.renderTo(graphContainer as HTMLElement);
 	}
 
+	removeInlineGraphInEditor() {
+		// 본문 그래프 컨테이너 제거
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (view) {
+			const graphContainer = view.contentEl.querySelector('.inline-graph-container');
+			if (graphContainer) graphContainer.remove();
+		}
+	}
+
+	toggleInlineGraphInEditor() {
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (view) {
+			const container = view.contentEl.querySelector('.inline-graph-container');
+			if (container) {
+				// 그래프가 이미 있으면 제거
+				this.removeInlineGraphInEditor();
+			} else {
+				// 그래프가 없으면 표시
+				this.showInlineGraphInEditor();
+			}
+		}
+	}
+
 	updateGraphs() {
 		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
 			if (leaf.view instanceof MarkdownView) {
@@ -124,13 +147,8 @@ export default class InlineGraphPlugin extends Plugin {
 	}
 
 	onunload() {
-		// 본문 그래프 컨테이너 제거
-		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (view) {
-			const graphContainer = view.contentEl.querySelector('.inline-graph-container');
-			if (graphContainer) graphContainer.remove();
-		}
 		console.log('Unloading Inline Graph Plugin');
+		this.removeInlineGraphInEditor();
 	}
 
 	async loadSettings() {
