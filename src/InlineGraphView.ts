@@ -1,57 +1,10 @@
 import { WorkspaceLeaf, Notice, TFile } from 'obsidian';
-// vis-network import 추가
 import { Network } from 'vis-network/standalone';
 
 export class InlineGraphView {
     private leaf: WorkspaceLeaf | null = null;
 
     constructor(private app: any, private getSettings: () => any) {}
-
-    async show() {
-        try {
-            if (!this.leaf) {
-                new Notice('Creating Local Graph...');
-                this.leaf = this.app.workspace.getRightLeaf(true);
-                await this.leaf.setViewState({
-                    type: 'localgraph',
-                    state: {}
-                });
-                
-                this.app.workspace.revealLeaf(this.leaf);
-                await this.updateGraph();
-                
-                new Notice('Local Graph created successfully');
-            }
-        } catch (error) {
-            console.error('Error showing local graph:', error);
-            new Notice('Failed to create Local Graph: ' + error.message);
-        }
-    }
-
-    async updateGraph() {
-        if (this.leaf) {
-            const activeFile = this.app.workspace.getActiveFile();
-            if (activeFile) {
-                await this.leaf.setViewState({
-                    type: 'localgraph',
-                    state: {
-                        file: activeFile.path,
-                    }
-                });
-            }
-        }
-    }
-
-    detach() {
-        if (this.leaf) {
-            this.leaf.detach();
-            this.leaf = null;
-        }
-    }
-
-    isAttached(): boolean {
-        return this.leaf !== null;
-    }
 
     // 새로운 메서드: 임의의 DOM 컨테이너에 그래프 렌더링
     renderTo(container: HTMLElement) {
