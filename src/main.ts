@@ -64,6 +64,7 @@ export default class InlineGraphPlugin extends Plugin {
 		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
 	}
 
+	// .inline-graph-container div를 추가해 인라인그래프를 표시한다.
 	showInlineGraphInEditor() {
 		console.log("showInlineGraphInEditor Begin")
 
@@ -73,25 +74,30 @@ export default class InlineGraphPlugin extends Plugin {
 			return; // Not a markdown view
 		}
 		const view = activeLeaf.view;
-		// 편집 모드에서도 그래프를 표시하도록 getMode() 체크를 제거합니다.
 
-		// 읽기 모드(.markdown-preview-sizer)와 편집 모드(.cm-sizer)의 컨테이너를 모두 찾습니다.
-		const sizer = view.contentEl.querySelector('.markdown-preview-sizer');
-		if (!sizer) {
-			// console.log("Sizer not found");
+		let parentEl: Element | null = null;
+		const mode = view.getMode();
+
+		if (mode === 'preview') {
+			parentEl = view.contentEl.querySelector('.markdown-preview-sizer');
+		} else { // 'source' or 'live'
+			parentEl = view.contentEl.querySelector('.cm-sizer');
+		}
+
+		if (!parentEl) {
 			return;
 		}
 
-		let graphContainer = sizer.querySelector('.inline-graph-container') as HTMLElement;
-
-		// 그래프 컨테이너가 없으면 새로 생성하여 본문 하단에 추가합니다.
+		// Check if graph container already exists to avoid duplication
+		let graphContainer = parentEl.querySelector('.inline-graph-container');
 		if (!graphContainer) {
 			graphContainer = document.createElement('div');
 			graphContainer.className = 'inline-graph-container';
 			graphContainer.style.marginTop = '2em';
-			sizer.appendChild(graphContainer);
+			parentEl.appendChild(graphContainer);
 		}
-		this.graphView.renderTo(graphContainer);
+
+		this.graphView.renderTo(graphContainer as HTMLElement);
 	}
 
 	updateGraphs() {
