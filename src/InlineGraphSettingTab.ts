@@ -32,7 +32,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.showArrows = value;
 					await this.plugin.saveSettings();
-					this.plugin.updateGraphs(); // 즉시 갱신
+					this.plugin.updateGraphs(); // Update immediately
 				}));
 
 		new Setting(containerEl)

@@ -6,7 +6,7 @@ export class InlineGraphView {
 
     constructor(private app: any, private getSettings: () => any) {}
 
-    // 새로운 메서드: 임의의 DOM 컨테이너에 그래프 렌더링
+    // New method: Render the graph into an arbitrary DOM container
     renderTo(container: HTMLElement) {
         container.innerHTML = '';
         const graphDiv = document.createElement('div');
@@ -14,30 +14,30 @@ export class InlineGraphView {
         graphDiv.style.height = '300px';
         container.appendChild(graphDiv);
 
-        // 현재 노트 정보
+        // Current note info
         const activeFile = this.app.workspace.getActiveFile();
         if (!activeFile) {
-            graphDiv.textContent = '노트가 없습니다.';
+            graphDiv.textContent = 'No note found.';
             return;
         }
         const activeId = activeFile.basename;
 
-        // 링크 정보
+        // Link info (outgoing)
         const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
-        // 역링크 정보
+        // Backlink info (incoming)
         const backlinks = this.app.metadataCache.getBacklinksForFile(activeFile);
-        // console.log("Backlinks data:", backlinks); // 데이터 확인용 로그
+        // console.log("Backlinks data:", backlinks); // For debugging
 
-        // 노드/엣지 데이터 생성
+        // Node/edge data generation
         const nodeSet = new Set<string>();
         const nodes = [{ id: activeId, label: activeId }];
         nodeSet.add(activeId);
         const edges = [];
-        // id와 파일 경로 매핑
+        // id to file path mapping
         const idToPath: Record<string, string> = {};
         idToPath[activeId] = activeFile.path;
 
-        // 링크(아웃고잉)
+        // Outgoing links
         for (const target in links) {
             const targetName = target.split('/').pop()?.replace('.md', '') || target;
             if (!nodeSet.has(targetName)) {
@@ -47,7 +47,7 @@ export class InlineGraphView {
             edges.push({ from: activeId, to: targetName });
             idToPath[targetName] = target;
         }
-        // 역링크(인커밍)
+        // Incoming backlinks
         for (const source of backlinks.data.keys()) {
             const sourceName = source.split('/').pop()?.replace('.md', '') || source;
             console.log("backlinks sourceName:", sourceName);
@@ -60,12 +60,12 @@ export class InlineGraphView {
             // console.log("backlinks sourceName:", sourceName);
         }
 
-        // 플러그인 설정에서 showArrows 값 가져오기
+        // Get plugin settings
         const showArrows = this.getSettings().showArrows ?? true;
         const nodeBgColor = this.getSettings().nodeBgColor ?? '#888888';
         console.log('showArrows:', showArrows);
 
-        // vis-network로 그래프 렌더링
+        // Render the graph with vis-network
         const data = { nodes, edges };
         const options = {
             nodes: { shape: 'ellipse', color: nodeBgColor, font: { color: '#fff' } },
@@ -83,7 +83,7 @@ export class InlineGraphView {
         };
         const network = new Network(graphDiv, data, options);
 
-        // 노드 클릭 시 해당 md 파일로 이동
+        // Open the corresponding md file when a node is clicked
         network.on('click', (params) => {
             if (params.nodes && params.nodes.length > 0) {
                 const nodeId = params.nodes[0];

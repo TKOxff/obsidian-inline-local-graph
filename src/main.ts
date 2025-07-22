@@ -29,11 +29,11 @@ export default class InlineGraphPlugin extends Plugin {
 		await this.loadSettings();
 		this.graphView = new InlineGraphView(this.app, () => this.settings);
 
-		// 모든 UI 변경을 안정적으로 감지하기 위해 MutationObserver를 사용합니다.
+		// Use MutationObserver to reliably detect all UI changes.
 		const debouncedUpdate = debounce(() => {
-			this.observer.disconnect(); // 루프 방지를 위해 감시 중단
+			this.observer.disconnect(); // Stop observing to prevent infinite loop
 			this.showInlineGraphInEditor();
-			this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true }); // 감시 재시작
+			this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true }); // Resume observing
 		}, 300);
 
 		this.observer = new MutationObserver(debouncedUpdate);
@@ -56,7 +56,7 @@ export default class InlineGraphPlugin extends Plugin {
 		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
 	}
 
-	// .inline-graph-container div를 추가해 인라인그래프를 표시한다.
+	// Add .inline-graph-container div to show the inline graph
 	showInlineGraphInEditor() {
 		console.log("showInlineGraphInEditor Begin")
 
@@ -103,7 +103,7 @@ export default class InlineGraphPlugin extends Plugin {
 	}
 
 	removeInlineGraphInEditor() {
-		// 본문 그래프 컨테이너 제거
+		// Remove the inline graph container from the note
 		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 		if (view) {
 			const graphContainer = view.contentEl.querySelector('.inline-graph-container');
@@ -116,10 +116,8 @@ export default class InlineGraphPlugin extends Plugin {
 		if (view) {
 			const container = view.contentEl.querySelector('.inline-graph-container');
 			if (container) {
-				// 그래프가 이미 있으면 제거
 				this.removeInlineGraphInEditor();
 			} else {
-				// 그래프가 없으면 표시
 				this.showInlineGraphInEditor();
 			}
 		}
@@ -138,8 +136,8 @@ export default class InlineGraphPlugin extends Plugin {
 
 	onunload() {
 		console.log('Unloading Inline Graph Plugin');
-		this.observer.disconnect(); // 감시자 정리
-		// 플러그인 비활성화 시 모든 그래프 제거
+		this.observer.disconnect();
+		// Remove all graphs when the plugin is deactivated
 		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
 			if (leaf.view instanceof MarkdownView) {
 				const container = leaf.view.contentEl.querySelector('.inline-graph-container');
