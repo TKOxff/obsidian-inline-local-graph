@@ -17,6 +17,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
     showGraphBorder: true,
 }
 
+// InlineGraph == InlineLocalGraph
 export default class InlineGraphPlugin extends Plugin {
 	settings: MyPluginSettings;
 	private graphView: InlineGraphView;
