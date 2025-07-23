@@ -39,8 +39,7 @@ export default class InlineGraphPlugin extends Plugin {
 		this.observer = new MutationObserver(debouncedUpdate);
 		this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true });
 		
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Toggle Inline local graph', async (evt: MouseEvent) => {
-			console.log('Toggle Local Graph clicked');
+		const ribbonIconEl = this.addRibbonIcon('waypoints', 'Toggle Inline local graph', async (evt: MouseEvent) => {
 			this.toggleInlineGraphInEditor();
 		});
 		ribbonIconEl.addClass('inline-graph-ribbon-class');

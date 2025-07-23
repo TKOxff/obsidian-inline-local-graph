@@ -4,6 +4,11 @@ Displays a custom `local graph` of the current note directly at the bottom of th
 
 ![example image](./res/example.png)
 
+## Usage
+
+Simply enable the plugin, and the inline local graph will automatically appear at the bottom of your note.
+
+
 ## Features
 
 ### Inline Graph Visualization
