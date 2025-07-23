@@ -11,13 +11,9 @@ Simply enable the plugin, and the inline local graph will automatically appear a
 
 ## Features
 
-### Inline Graph Visualization
+### Practical Local Graph Visualization
 
-Automatically shows a visual graph of outgoing and incoming links (backlinks) for the current note at the bottom of the note.
-
-### Lightweight & Fast
-
-Uses Obsidian's metadataCache and [vis-network.js](https://visjs.github.io/vis-network/) for efficient, responsive rendering.
+A custom local graph focused on clarity, displaying links and backlinks without flashy visual effects, making it easy to understand and navigate between notes.
 
 
 ## Dependencies
