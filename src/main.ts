@@ -61,11 +61,11 @@ export default class InlineGraphPlugin extends Plugin {
 
 	// Add .inline-graph-container div to show the inline graph
 	showInlineGraphInEditor() {
-		console.log("showInlineGraphInEditor Begin")
+		console.log("showInlineGraphInEditor Begin");
 
 		const activeLeaf = this.app.workspace.activeLeaf;
 		if (!activeLeaf || !(activeLeaf.view instanceof MarkdownView)) {
-			console.log("showInlineGraphInEditor - Not a markdown view")
+			console.log("showInlineGraphInEditor - Not a markdown view");
 			return; // Not a markdown view
 		}
 		const view = activeLeaf.view;
@@ -101,7 +101,7 @@ export default class InlineGraphPlugin extends Plugin {
 			graphContainer.style.border = 'none';
 			graphContainer.style.padding = '0';
 		}
-		
+
 		this.graphView.renderTo(graphContainer as HTMLElement);
 	}
 

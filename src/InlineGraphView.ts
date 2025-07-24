@@ -11,7 +11,7 @@ export class InlineGraphView {
         container.innerHTML = '';
         const graphDiv = document.createElement('div');
         graphDiv.style.width = '100%';
-        graphDiv.style.height = '300px';
+        graphDiv.style.height = '500px'; // Explicit height for better visibility
         container.appendChild(graphDiv);
 
         // Current note info
