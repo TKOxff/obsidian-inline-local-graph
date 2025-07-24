@@ -44,23 +44,18 @@ export default class InlineGraphPlugin extends Plugin {
 		this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true });
 		
 		const ribbonIconEl = this.addRibbonIcon('waypoints', 'Toggle Inline local graph', () => {
-			this.isGraphVisible = !this.isGraphVisible;
-			if (this.isGraphVisible) {
-				this.showInlineGraphInEditor();
-			} else {
-				this.removeInlineGraphInEditor();
-			}
+			this.toggleInlineGraphInEditor();
 		});
 		ribbonIconEl.addClass('inline-graph-ribbon-class');
 
-		// 로컬 그래프 표시 커맨드만 남김
+		// Only the local graph display command remains
 		this.addCommand({
-			id: 'show-local-graph',
-			name: 'Show Local Graph',
-			callback: () => this.showInlineGraphInEditor()
+			id: 'toggle-local-graph',
+			name: 'Toogle Local Graph',
+			callback: () => this.toggleInlineGraphInEditor()
 		});
 
-		// 설정 탭 추가
+		// Add settings tab
 		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
 	}
 
@@ -120,14 +115,11 @@ export default class InlineGraphPlugin extends Plugin {
 	}
 
 	toggleInlineGraphInEditor() {
-		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (view) {
-			const container = view.contentEl.querySelector('.inline-graph-container');
-			if (container) {
-				this.removeInlineGraphInEditor();
-			} else {
-				this.showInlineGraphInEditor();
-			}
+		this.isGraphVisible = !this.isGraphVisible;
+		if (this.isGraphVisible) {
+			this.showInlineGraphInEditor();
+		} else {
+			this.removeInlineGraphInEditor();
 		}
 	}
 
