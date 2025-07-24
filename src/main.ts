@@ -1,6 +1,5 @@
 import { App, Plugin, debounce, MarkdownView } from 'obsidian';
 import { InlineGraphView } from './InlineGraphView';
-import { Notice } from 'obsidian';
 import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
 interface MyPluginSettings {
@@ -22,6 +21,7 @@ export default class InlineGraphPlugin extends Plugin {
 	settings: MyPluginSettings;
 	private graphView: InlineGraphView;
 	private observer: MutationObserver;
+    isGraphVisible: boolean = true; // default: visible
 
 	async onload() {
 		console.log('Loading Inline Graph Plugin');
@@ -32,15 +32,24 @@ export default class InlineGraphPlugin extends Plugin {
 		// Use MutationObserver to reliably detect all UI changes.
 		const debouncedUpdate = debounce(() => {
 			this.observer.disconnect(); // Stop observing to prevent infinite loop
-			this.showInlineGraphInEditor();
+			if (this.isGraphVisible) {
+				this.showInlineGraphInEditor();
+			} else {
+				this.removeInlineGraphInEditor();
+			}
 			this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true }); // Resume observing
 		}, 300);
 
 		this.observer = new MutationObserver(debouncedUpdate);
 		this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true });
 		
-		const ribbonIconEl = this.addRibbonIcon('waypoints', 'Toggle Inline local graph', async (evt: MouseEvent) => {
-			this.toggleInlineGraphInEditor();
+		const ribbonIconEl = this.addRibbonIcon('waypoints', 'Toggle Inline local graph', () => {
+			this.isGraphVisible = !this.isGraphVisible;
+			if (this.isGraphVisible) {
+				this.showInlineGraphInEditor();
+			} else {
+				this.removeInlineGraphInEditor();
+			}
 		});
 		ribbonIconEl.addClass('inline-graph-ribbon-class');
 
