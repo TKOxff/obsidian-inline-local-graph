@@ -41,7 +41,11 @@ export class InlineGraphView {
                 nodes.push({ id: targetName, label: targetName });
                 nodeSet.add(targetName);
             }
-            edges.push({ from: activeId, to: targetName });
+            edges.push({
+                from: activeId,
+                to: targetName,
+                color: { opacity: 1.0 }, // Full opacity for outgoing links
+            });
             idToPath[targetName] = target;
         }
 
@@ -53,7 +57,11 @@ export class InlineGraphView {
                     nodes.push({ id: sourceName, label: sourceName });
                     nodeSet.add(sourceName);
                 }
-                edges.push({ from: sourceName, to: activeId });
+                edges.push({
+                    from: sourceName,
+                    to: activeId,
+                    color: { opacity: 0.3 }, // Reduced opacity for backlinks
+                });
                 idToPath[sourceName] = source;
             }
         }
