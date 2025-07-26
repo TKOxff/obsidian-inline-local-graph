@@ -24,16 +24,13 @@ export class InlineGraphView {
 
         // Link info (outgoing)
         const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
-        // Backlink info (incoming)
         const backlinks = this.app.metadataCache.getBacklinksForFile(activeFile);
-        // console.log("Backlinks data:", backlinks); // For debugging
 
         // Node/edge data generation
         const nodeSet = new Set<string>();
         const nodes = [{ id: activeId, label: activeId }];
         nodeSet.add(activeId);
         const edges = [];
-        // id to file path mapping
         const idToPath: Record<string, string> = {};
         idToPath[activeId] = activeFile.path;
 
@@ -47,17 +44,18 @@ export class InlineGraphView {
             edges.push({ from: activeId, to: targetName });
             idToPath[targetName] = target;
         }
-        // Incoming backlinks
-        for (const source of backlinks.data.keys()) {
-            const sourceName = source.split('/').pop()?.replace('.md', '') || source;
-            console.log("backlinks sourceName:", sourceName);
-            if (!nodeSet.has(sourceName)) {
-                nodes.push({ id: sourceName, label: sourceName });
-                nodeSet.add(sourceName);
+
+        // Incoming backlinks (conditionally render based on settings)
+        if (this.getSettings().showBacklinks) {
+            for (const source of backlinks.data.keys()) {
+                const sourceName = source.split('/').pop()?.replace('.md', '') || source;
+                if (!nodeSet.has(sourceName)) {
+                    nodes.push({ id: sourceName, label: sourceName });
+                    nodeSet.add(sourceName);
+                }
+                edges.push({ from: sourceName, to: activeId });
+                idToPath[sourceName] = source;
             }
-            edges.push({ from: sourceName, to: activeId });
-            idToPath[sourceName] = source;
-            // console.log("backlinks sourceName:", sourceName);
         }
 
         // Get plugin settings

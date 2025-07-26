@@ -34,6 +34,17 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 					this.plugin.updateGraphs(); // Update immediately
 				}));
+                
+        new Setting(containerEl)
+            .setName('Show graph border')
+            .setDesc('Toggle the border around the graph container')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.showGraphBorder)
+                .onChange(async (value) => {
+                    this.plugin.settings.showGraphBorder = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.updateGraphs();
+                }));
 
 		new Setting(containerEl)
 			.setName('Node background color')
@@ -49,14 +60,14 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 			.inputEl.setAttribute('type', 'color'));
 
 		new Setting(containerEl)
-			.setName('Show graph border')
-			.setDesc('Toggle the border around the graph container')
+			.setName('Show Backlinks')
+			.setDesc('Toggle whether to display backlinks in the inline graph.')
 			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.showGraphBorder)
+				.setValue(this.plugin.settings.showBacklinks)
 				.onChange(async (value) => {
-					this.plugin.settings.showGraphBorder = value;
+					this.plugin.settings.showBacklinks = value;
 					await this.plugin.saveSettings();
-					this.plugin.updateGraphs();
+                    this.plugin.updateGraphs();
 				}));
 	}
-} 
+}

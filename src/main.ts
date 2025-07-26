@@ -7,6 +7,7 @@ interface MyPluginSettings {
     showArrows: boolean;
     nodeBgColor: string;
     showGraphBorder: boolean;
+    showBacklinks: boolean; // New option to toggle backlinks
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -14,6 +15,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
     showArrows: true,
     nodeBgColor: '#888888',
     showGraphBorder: true,
+    showBacklinks: true, // Default: show backlinks
 }
 
 // InlineGraph == InlineLocalGraph
