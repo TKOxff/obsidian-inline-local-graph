@@ -28,7 +28,7 @@ export class InlineGraphView {
 
         // Node/edge data generation
         const nodeSet = new Set<string>();
-        const nodes = [{ id: activeId, label: activeId }];
+        const nodes = [{ id: activeId, label: activeId, font: { color: '#fff' } }]; // Main node with full opacity
         nodeSet.add(activeId);
         const edges = [];
         const idToPath: Record<string, string> = {};
@@ -38,7 +38,7 @@ export class InlineGraphView {
         for (const target in links) {
             const targetName = target.split('/').pop()?.replace('.md', '') || target;
             if (!nodeSet.has(targetName)) {
-                nodes.push({ id: targetName, label: targetName });
+                nodes.push({ id: targetName, label: targetName, font: { color: '#fff' } }); // Full opacity for outgoing nodes
                 nodeSet.add(targetName);
             }
             edges.push({
@@ -54,7 +54,11 @@ export class InlineGraphView {
             for (const source of backlinks.data.keys()) {
                 const sourceName = source.split('/').pop()?.replace('.md', '') || source;
                 if (!nodeSet.has(sourceName)) {
-                    nodes.push({ id: sourceName, label: sourceName });
+                    nodes.push({ 
+                        id: sourceName, 
+                        label: sourceName, 
+                        font: { color: 'rgba(255, 255, 255, 0.6)' } // Reduced opacity for backlink text
+                    });
                     nodeSet.add(sourceName);
                 }
                 edges.push({
