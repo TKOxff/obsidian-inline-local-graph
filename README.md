@@ -1,6 +1,7 @@
 # Inline Local Graph
 
 Displays a custom `local graph` of the current note directly at the bottom of the note content.
+Utilizes the unused space at the bottom of your notes!
 
 ![example image](./res/example.png)
 

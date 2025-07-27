@@ -34,8 +34,11 @@ export class InlineGraphView {
         const idToPath: Record<string, string> = {};
         idToPath[activeId] = activeFile.path;
 
-        // Outgoing links
+        // Outgoing links (conditionally skip image files)
         for (const target in links) {
+            if (this.getSettings().skipImageLinks && /\.(png|jpg|jpeg|gif|svg)$/i.test(target)) {
+                continue; // Skip image files if the setting is enabled
+            }
             const targetName = target.split('/').pop()?.replace('.md', '') || target;
             if (!nodeSet.has(targetName)) {
                 nodes.push({ id: targetName, label: targetName, font: { color: '#fff' } }); // Full opacity for outgoing nodes

@@ -61,13 +61,24 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Show Backlinks')
-			.setDesc('Toggle whether to display backlinks in the inline graph.')
+			.setDesc('Toggle whether to display backlinks in the graph.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showBacklinks)
 				.onChange(async (value) => {
 					this.plugin.settings.showBacklinks = value;
 					await this.plugin.saveSettings();
                     this.plugin.updateGraphs();
+				}));
+
+		new Setting(containerEl)
+			.setName('Skip Image Links')
+			.setDesc('Toggle whether to exclude image files from the graph.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.skipImageLinks)
+				.onChange(async (value) => {
+					this.plugin.settings.skipImageLinks = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateGraphs(); // Update immediately
 				}));
 	}
 }

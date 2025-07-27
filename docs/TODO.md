@@ -2,7 +2,8 @@
 
 ### 2025.07
 
-- [ ] 인라인로컬그래프 하단부를 100% 차지 하도록.
+- [ ] Make the bottom part of the inline local graph occupy 100%.
+- [x] Exclude image file links.
 
 ## DONE
 

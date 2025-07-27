@@ -7,7 +7,8 @@ interface MyPluginSettings {
     showArrows: boolean;
     nodeBgColor: string;
     showGraphBorder: boolean;
-    showBacklinks: boolean; // New option to toggle backlinks
+    showBacklinks: boolean; // Option to toggle backlinks
+    skipImageLinks: boolean; // New option to toggle image link skipping
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -16,6 +17,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
     nodeBgColor: '#888888',
     showGraphBorder: true,
     showBacklinks: true, // Default: show backlinks
+    skipImageLinks: true, // Default: skip image links
 }
 
 // InlineGraph == InlineLocalGraph
