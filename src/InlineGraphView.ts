@@ -9,10 +9,45 @@ export class InlineGraphView {
     // New method: Render the graph into an arbitrary DOM container
     renderTo(container: HTMLElement) {
         container.innerHTML = '';
+
+        // Wrapper for graph and controls
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.style.position = 'relative';
+
+        // Zoom control UI
+        const controlsDiv = document.createElement('div');
+        controlsDiv.style.display = 'flex';
+        controlsDiv.style.justifyContent = 'flex-end';
+        controlsDiv.style.gap = '8px';
+        controlsDiv.style.marginBottom = '4px';
+        controlsDiv.style.opacity = '0';
+        controlsDiv.style.transition = 'opacity 0.2s';
+
+        const zoomOutBtn = document.createElement('button');
+        zoomOutBtn.textContent = '-';
+        zoomOutBtn.title = 'Zoom Out';
+        zoomOutBtn.style.width = '32px';
+
+        const zoomInBtn = document.createElement('button');
+        zoomInBtn.textContent = '+';
+        zoomInBtn.title = 'Zoom In';
+        zoomInBtn.style.width = '32px';
+
+        controlsDiv.appendChild(zoomOutBtn);
+        controlsDiv.appendChild(zoomInBtn);
+
         const graphDiv = document.createElement('div');
         graphDiv.style.width = '100%';
-        graphDiv.style.height = '500px'; // Explicit height for better visibility
-        container.appendChild(graphDiv);
+        graphDiv.style.height = '500px';
+        graphDiv.style.position = 'relative';
+
+        // Hover logic: show controls only when mouse is over wrapperDiv
+        wrapperDiv.onmouseenter = () => { controlsDiv.style.opacity = '1'; };
+        wrapperDiv.onmouseleave = () => { controlsDiv.style.opacity = '0'; };
+
+        wrapperDiv.appendChild(controlsDiv);
+        wrapperDiv.appendChild(graphDiv);
+        container.appendChild(wrapperDiv);
 
         // Current note info
         const activeFile = this.app.workspace.getActiveFile();
@@ -92,9 +127,20 @@ export class InlineGraphView {
                 }
             },
             layout: { improvedLayout: true },
-            physics: { enabled: true }
+            physics: { enabled: true },
+            interaction: { zoomView: false } // Disable mouse scroll zoom
         };
         const network = new Network(graphDiv, data, options);
+
+        // Manual zoom control
+        zoomInBtn.onclick = () => {
+            const scale = network.getScale();
+            network.moveTo({ scale: Math.min(scale * 1.2, 5) });
+        };
+        zoomOutBtn.onclick = () => {
+            const scale = network.getScale();
+            network.moveTo({ scale: Math.max(scale / 1.2, 0.2) });
+        };
 
         // Open the corresponding md file when a node is clicked
         network.on('click', (params) => {

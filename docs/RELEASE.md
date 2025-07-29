@@ -6,3 +6,4 @@ https://github.com/obsidianmd/obsidian-releases
 
 - Backlinks with transparency
 - Exclude image file links.
+- Disable zooming with mouse scroll and instead provide UI buttons for zoom control.
