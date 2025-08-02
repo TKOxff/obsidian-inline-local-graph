@@ -8,7 +8,10 @@ export class InlineGraphView {
 
     // New method: Render the graph into an arbitrary DOM container
     renderTo(container: HTMLElement) {
-        container.innerHTML = '';
+        // Remove all children safely (no innerHTML)
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
 
         // Wrapper for graph and controls
         const wrapperDiv = document.createElement('div');
