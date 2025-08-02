@@ -8,11 +8,42 @@ export class InlineGraphView {
 
     // New method: Render the graph into an arbitrary DOM container
     renderTo(container: HTMLElement) {
-        container.innerHTML = '';
+        // Remove all children safely (no innerHTML)
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+
+        // Wrapper for graph and controls
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.className = 'inline-graph-wrapper';
+
+        // Zoom control UI
+        const controlsDiv = document.createElement('div');
+        controlsDiv.className = 'inline-graph-controls';
+
+        const zoomOutBtn = document.createElement('button');
+        zoomOutBtn.className = 'inline-graph-zoom-btn';
+        zoomOutBtn.textContent = '-';
+        zoomOutBtn.title = 'Zoom Out';
+
+        const zoomInBtn = document.createElement('button');
+        zoomInBtn.className = 'inline-graph-zoom-btn';
+        zoomInBtn.textContent = '+';
+        zoomInBtn.title = 'Zoom In';
+
+        controlsDiv.appendChild(zoomOutBtn);
+        controlsDiv.appendChild(zoomInBtn);
+
         const graphDiv = document.createElement('div');
-        graphDiv.style.width = '100%';
-        graphDiv.style.height = '500px'; // Explicit height for better visibility
-        container.appendChild(graphDiv);
+        graphDiv.className = 'inline-graph-vis';
+
+        // Hover logic: show controls only when mouse is over wrapperDiv
+        wrapperDiv.onmouseenter = () => { controlsDiv.classList.add('show'); };
+        wrapperDiv.onmouseleave = () => { controlsDiv.classList.remove('show'); };
+
+        wrapperDiv.appendChild(controlsDiv);
+        wrapperDiv.appendChild(graphDiv);
+        container.appendChild(wrapperDiv);
 
         // Current note info
         const activeFile = this.app.workspace.getActiveFile();
@@ -24,40 +55,53 @@ export class InlineGraphView {
 
         // Link info (outgoing)
         const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
-        // Backlink info (incoming)
         const backlinks = this.app.metadataCache.getBacklinksForFile(activeFile);
-        // console.log("Backlinks data:", backlinks); // For debugging
 
         // Node/edge data generation
         const nodeSet = new Set<string>();
-        const nodes = [{ id: activeId, label: activeId }];
+        const nodes = [{ id: activeId, label: activeId, font: { color: '#fff' } }]; // Main node with full opacity
         nodeSet.add(activeId);
         const edges = [];
-        // id to file path mapping
         const idToPath: Record<string, string> = {};
         idToPath[activeId] = activeFile.path;
 
-        // Outgoing links
+        // Outgoing links (conditionally skip image files)
         for (const target in links) {
+            if (this.getSettings().skipImageLinks && /\.(png|jpg|jpeg|gif|svg)$/i.test(target)) {
+                continue; // Skip image files if the setting is enabled
+            }
             const targetName = target.split('/').pop()?.replace('.md', '') || target;
             if (!nodeSet.has(targetName)) {
-                nodes.push({ id: targetName, label: targetName });
+                nodes.push({ id: targetName, label: targetName, font: { color: '#fff' } }); // Full opacity for outgoing nodes
                 nodeSet.add(targetName);
             }
-            edges.push({ from: activeId, to: targetName });
+            edges.push({
+                from: activeId,
+                to: targetName,
+                color: { opacity: 1.0 }, // Full opacity for outgoing links
+            });
             idToPath[targetName] = target;
         }
-        // Incoming backlinks
-        for (const source of backlinks.data.keys()) {
-            const sourceName = source.split('/').pop()?.replace('.md', '') || source;
-            console.log("backlinks sourceName:", sourceName);
-            if (!nodeSet.has(sourceName)) {
-                nodes.push({ id: sourceName, label: sourceName });
-                nodeSet.add(sourceName);
+
+        // Incoming backlinks (conditionally render based on settings)
+        if (this.getSettings().showBacklinks) {
+            for (const source of backlinks.data.keys()) {
+                const sourceName = source.split('/').pop()?.replace('.md', '') || source;
+                if (!nodeSet.has(sourceName)) {
+                    nodes.push({ 
+                        id: sourceName, 
+                        label: sourceName, 
+                        font: { color: 'rgba(255, 255, 255, 0.6)' } // Reduced opacity for backlink text
+                    });
+                    nodeSet.add(sourceName);
+                }
+                edges.push({
+                    from: sourceName,
+                    to: activeId,
+                    color: { opacity: 0.3 }, // Reduced opacity for backlinks
+                });
+                idToPath[sourceName] = source;
             }
-            edges.push({ from: sourceName, to: activeId });
-            idToPath[sourceName] = source;
-            // console.log("backlinks sourceName:", sourceName);
         }
 
         // Get plugin settings
@@ -79,9 +123,20 @@ export class InlineGraphView {
                 }
             },
             layout: { improvedLayout: true },
-            physics: { enabled: true }
+            physics: { enabled: true },
+            interaction: { zoomView: false } // Disable mouse scroll zoom
         };
         const network = new Network(graphDiv, data, options);
+
+        // Manual zoom control
+        zoomInBtn.onclick = () => {
+            const scale = network.getScale();
+            network.moveTo({ scale: Math.min(scale * 1.2, 5) });
+        };
+        zoomOutBtn.onclick = () => {
+            const scale = network.getScale();
+            network.moveTo({ scale: Math.max(scale / 1.2, 0.2) });
+        };
 
         // Open the corresponding md file when a node is clicked
         network.on('click', (params) => {

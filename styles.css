@@ -6,3 +6,31 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.inline-graph-wrapper {
+    position: relative;
+}
+
+.inline-graph-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.inline-graph-controls.show {
+    opacity: 1;
+}
+
+.inline-graph-zoom-btn {
+    width: 32px;
+    cursor: pointer;
+}
+
+.inline-graph-vis {
+    width: 100%;
+    height: 500px;
+    position: relative;
+}
