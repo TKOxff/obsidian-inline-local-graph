@@ -15,38 +15,31 @@ export class InlineGraphView {
 
         // Wrapper for graph and controls
         const wrapperDiv = document.createElement('div');
-        wrapperDiv.style.position = 'relative';
+        wrapperDiv.className = 'inline-graph-wrapper';
 
         // Zoom control UI
         const controlsDiv = document.createElement('div');
-        controlsDiv.style.display = 'flex';
-        controlsDiv.style.justifyContent = 'flex-end';
-        controlsDiv.style.gap = '8px';
-        controlsDiv.style.marginBottom = '4px';
-        controlsDiv.style.opacity = '0';
-        controlsDiv.style.transition = 'opacity 0.2s';
+        controlsDiv.className = 'inline-graph-controls';
 
         const zoomOutBtn = document.createElement('button');
+        zoomOutBtn.className = 'inline-graph-zoom-btn';
         zoomOutBtn.textContent = '-';
         zoomOutBtn.title = 'Zoom Out';
-        zoomOutBtn.style.width = '32px';
 
         const zoomInBtn = document.createElement('button');
+        zoomInBtn.className = 'inline-graph-zoom-btn';
         zoomInBtn.textContent = '+';
         zoomInBtn.title = 'Zoom In';
-        zoomInBtn.style.width = '32px';
 
         controlsDiv.appendChild(zoomOutBtn);
         controlsDiv.appendChild(zoomInBtn);
 
         const graphDiv = document.createElement('div');
-        graphDiv.style.width = '100%';
-        graphDiv.style.height = '500px';
-        graphDiv.style.position = 'relative';
+        graphDiv.className = 'inline-graph-vis';
 
         // Hover logic: show controls only when mouse is over wrapperDiv
-        wrapperDiv.onmouseenter = () => { controlsDiv.style.opacity = '1'; };
-        wrapperDiv.onmouseleave = () => { controlsDiv.style.opacity = '0'; };
+        wrapperDiv.onmouseenter = () => { controlsDiv.classList.add('show'); };
+        wrapperDiv.onmouseleave = () => { controlsDiv.classList.remove('show'); };
 
         wrapperDiv.appendChild(controlsDiv);
         wrapperDiv.appendChild(graphDiv);

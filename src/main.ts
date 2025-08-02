@@ -30,6 +30,8 @@ export default class InlineGraphPlugin extends Plugin {
 	async onload() {
 		console.log('Loading Inline Graph Plugin');
 
+		this.registerStyles();
+
 		await this.loadSettings();
 		this.graphView = new InlineGraphView(this.app, () => this.settings);
 
@@ -61,6 +63,16 @@ export default class InlineGraphPlugin extends Plugin {
 
 		// Add settings tab
 		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
+	}
+
+	registerStyles() {
+		const styleEl = document.createElement('link');
+		styleEl.rel = 'stylesheet';
+		styleEl.type = 'text/css';
+		styleEl.href = this.app.vault.adapter.getResourcePath(
+			this.manifest.dir + '/styles.css'
+		);
+		document.head.appendChild(styleEl);
 	}
 
 	// Add .inline-graph-container div to show the inline graph
