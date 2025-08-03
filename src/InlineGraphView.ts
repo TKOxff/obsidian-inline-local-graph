@@ -75,6 +75,102 @@ export class InlineGraphView {
         return backlinkRowDiv;
     }
 
+    private renderGraph(graphDiv: HTMLElement, networkRef: { current: Network | null }) {
+        // Current note info
+        const activeFile = this.app.workspace.getActiveFile();
+        if (!activeFile) {
+            graphDiv.textContent = 'No note found.';
+            return;
+        }
+        const activeId = activeFile.basename;
+
+        // Link info (outgoing)
+        const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
+        const backlinks = this.app.metadataCache.getBacklinksForFile(activeFile);
+
+        // Node/edge data generation
+        const nodeSet = new Set<string>();
+        const nodes = [{ id: activeId, label: activeId, font: { color: '#fff' } }];
+        nodeSet.add(activeId);
+        const edges = [];
+        const idToPath: Record<string, string> = {};
+        idToPath[activeId] = activeFile.path;
+
+        // Outgoing links (conditionally skip image files)
+        for (const target in links) {
+            if (this.getSettings().skipImageLinks && /\.(png|jpg|jpeg|gif|svg)$/i.test(target)) {
+                continue;
+            }
+            const targetName = target.split('/').pop()?.replace('.md', '') || target;
+            if (!nodeSet.has(targetName)) {
+                nodes.push({ id: targetName, label: targetName, font: { color: '#fff' } });
+                nodeSet.add(targetName);
+            }
+            edges.push({
+                from: activeId,
+                to: targetName,
+                color: { opacity: 1.0 },
+            });
+            idToPath[targetName] = target;
+        }
+
+        // Incoming backlinks (conditionally render based on settings)
+        if (this.getSettings().showBacklinks) {
+            for (const source of backlinks.data.keys()) {
+                const sourceName = source.split('/').pop()?.replace('.md', '') || source;
+                if (!nodeSet.has(sourceName)) {
+                    nodes.push({
+                        id: sourceName,
+                        label: sourceName,
+                        font: { color: 'rgba(255, 255, 255, 0.6)' }
+                    });
+                    nodeSet.add(sourceName);
+                }
+                edges.push({
+                    from: sourceName,
+                    to: activeId,
+                    color: { opacity: 0.3 },
+                });
+                idToPath[sourceName] = source;
+            }
+        }
+
+        // Get plugin settings
+        const showArrows = this.getSettings().showArrows ?? true;
+        const nodeBgColor = this.getSettings().nodeBgColor ?? '#888888';
+
+        // Render the graph with vis-network
+        const data = { nodes, edges };
+        const options = {
+            nodes: { shape: 'ellipse', color: nodeBgColor, font: { color: '#fff' } },
+            edges: {
+                color: '#aaa',
+                arrows: {
+                    to: {
+                        enabled: showArrows,
+                        scaleFactor: 0.5
+                    }
+                }
+            },
+            layout: { improvedLayout: true },
+            physics: { enabled: true },
+            interaction: { zoomView: false }
+        };
+        const network = new Network(graphDiv, data, options);
+        networkRef.current = network;
+
+        // Open the corresponding md file when a node is clicked
+        network.on('click', (params) => {
+            if (params.nodes && params.nodes.length > 0) {
+                const nodeId = params.nodes[0];
+                const filePath = idToPath[nodeId];
+                if (filePath) {
+                    this.app.workspace.openLinkText(filePath, '', false);
+                }
+            }
+        });
+    }
+
     renderTo(container: HTMLElement) {
         // Remove all children safely (no innerHTML)
         while (container.firstChild) {
@@ -94,6 +190,7 @@ export class InlineGraphView {
         // Backlink switch (bottom row)
         const backlinkRowDiv = this.createBacklinkSwitch(container);
 
+        // Graph container
         const graphDiv = document.createElement('div');
         graphDiv.className = 'inline-graph-vis';
 
@@ -112,99 +209,7 @@ export class InlineGraphView {
         wrapperDiv.appendChild(graphDiv);
         container.appendChild(wrapperDiv);
 
-        // Current note info
-        const activeFile = this.app.workspace.getActiveFile();
-        if (!activeFile) {
-            graphDiv.textContent = 'No note found.';
-            return;
-        }
-        const activeId = activeFile.basename;
-
-        // Link info (outgoing)
-        const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
-        const backlinks = this.app.metadataCache.getBacklinksForFile(activeFile);
-
-        // Node/edge data generation
-        const nodeSet = new Set<string>();
-        const nodes = [{ id: activeId, label: activeId, font: { color: '#fff' } }]; // Main node with full opacity
-        nodeSet.add(activeId);
-        const edges = [];
-        const idToPath: Record<string, string> = {};
-        idToPath[activeId] = activeFile.path;
-
-        // Outgoing links (conditionally skip image files)
-        for (const target in links) {
-            if (this.getSettings().skipImageLinks && /\.(png|jpg|jpeg|gif|svg)$/i.test(target)) {
-                continue; // Skip image files if the setting is enabled
-            }
-            const targetName = target.split('/').pop()?.replace('.md', '') || target;
-            if (!nodeSet.has(targetName)) {
-                nodes.push({ id: targetName, label: targetName, font: { color: '#fff' } }); // Full opacity for outgoing nodes
-                nodeSet.add(targetName);
-            }
-            edges.push({
-                from: activeId,
-                to: targetName,
-                color: { opacity: 1.0 }, // Full opacity for outgoing links
-            });
-            idToPath[targetName] = target;
-        }
-
-        // Incoming backlinks (conditionally render based on settings)
-        if (this.getSettings().showBacklinks) {
-            for (const source of backlinks.data.keys()) {
-                const sourceName = source.split('/').pop()?.replace('.md', '') || source;
-                if (!nodeSet.has(sourceName)) {
-                    nodes.push({ 
-                        id: sourceName, 
-                        label: sourceName, 
-                        font: { color: 'rgba(255, 255, 255, 0.6)' } // Reduced opacity for backlink text
-                    });
-                    nodeSet.add(sourceName);
-                }
-                edges.push({
-                    from: sourceName,
-                    to: activeId,
-                    color: { opacity: 0.3 }, // Reduced opacity for backlinks
-                });
-                idToPath[sourceName] = source;
-            }
-        }
-
-        // Get plugin settings
-        const showArrows = this.getSettings().showArrows ?? true;
-        const nodeBgColor = this.getSettings().nodeBgColor ?? '#888888';
-        console.log('showArrows:', showArrows);
-
-        // Render the graph with vis-network
-        const data = { nodes, edges };
-        const options = {
-            nodes: { shape: 'ellipse', color: nodeBgColor, font: { color: '#fff' } },
-            edges: { 
-                color: '#aaa', 
-                arrows: {
-                    to: { 
-                        enabled: showArrows,
-                        scaleFactor: 0.5 
-                    }
-                }
-            },
-            layout: { improvedLayout: true },
-            physics: { enabled: true },
-            interaction: { zoomView: false } // Disable mouse scroll zoom
-        };
-        const network = new Network(graphDiv, data, options);
-        networkRef.current = network;
-
-        // Open the corresponding md file when a node is clicked
-        network.on('click', (params) => {
-            if (params.nodes && params.nodes.length > 0) {
-                const nodeId = params.nodes[0];
-                const filePath = idToPath[nodeId];
-                if (filePath) {
-                    this.app.workspace.openLinkText(filePath, '', false);
-                }
-            }
-        });
+        // 실제 그래프 렌더링
+        this.renderGraph(graphDiv, networkRef);
     }
 }
