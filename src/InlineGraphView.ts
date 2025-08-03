@@ -17,7 +17,7 @@ export class InlineGraphView {
         const wrapperDiv = document.createElement('div');
         wrapperDiv.className = 'inline-graph-wrapper';
 
-        // Zoom control UI
+        // Controls container (zoom only, top row)
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'inline-graph-controls';
 
@@ -34,14 +34,54 @@ export class InlineGraphView {
         controlsDiv.appendChild(zoomOutBtn);
         controlsDiv.appendChild(zoomInBtn);
 
+        // Backlink switch (bottom row)
+        const backlinkRowDiv = document.createElement('div');
+        backlinkRowDiv.className = 'inline-graph-backlink-row';
+
+        const switchLabel = document.createElement('label');
+        switchLabel.className = 'inline-graph-switch-label';
+
+        const labelText = document.createElement('span');
+        labelText.textContent = 'backlinks';
+
+        const switchSlider = document.createElement('span');
+        switchSlider.className = 'inline-graph-switch-slider';
+        // 상태에 따라 배경색/슬라이더 위치를 토글
+        const updateSwitchUI = () => {
+            if (this.getSettings().showBacklinks) {
+                switchSlider.classList.add('active');
+            } else {
+                switchSlider.classList.remove('active');
+            }
+        };
+        updateSwitchUI();
+
+        switchSlider.onclick = () => {
+            const settings = this.getSettings();
+            settings.showBacklinks = !settings.showBacklinks;
+            updateSwitchUI();
+            this.renderTo(container);
+        };
+
+        switchLabel.appendChild(labelText);
+        switchLabel.appendChild(switchSlider);
+        backlinkRowDiv.appendChild(switchLabel);
+
         const graphDiv = document.createElement('div');
         graphDiv.className = 'inline-graph-vis';
 
         // Hover logic: show controls only when mouse is over wrapperDiv
-        wrapperDiv.onmouseenter = () => { controlsDiv.classList.add('show'); };
-        wrapperDiv.onmouseleave = () => { controlsDiv.classList.remove('show'); };
+        wrapperDiv.onmouseenter = () => {
+            controlsDiv.classList.add('show');
+            backlinkRowDiv.classList.add('show');
+        };
+        wrapperDiv.onmouseleave = () => {
+            controlsDiv.classList.remove('show');
+            backlinkRowDiv.classList.remove('show');
+        };
 
         wrapperDiv.appendChild(controlsDiv);
+        wrapperDiv.appendChild(backlinkRowDiv);
         wrapperDiv.appendChild(graphDiv);
         container.appendChild(wrapperDiv);
 
