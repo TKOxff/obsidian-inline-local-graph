@@ -74,7 +74,7 @@ If your plugin does not need CSS, delete this file.
 }
 
 .inline-graph-switch-label span:first-child {
-    opacity: 0.6;
+    opacity: 0.5;
     margin-right: 2px; /* 텍스트와 스위치 사이 2px만 여백 */
 }
 
@@ -109,4 +109,13 @@ If your plugin does not need CSS, delete this file.
 .inline-graph-switch-slider.active:before {
     transform: translateX(16px);
     background: var(--background-primary);
+}
+
+.inline-graph-title {
+    opacity: 0.5;
+    font-size: 1em;
+    margin-right: auto;
+    align-self: center;
+    letter-spacing: 0.02em;
+    padding-left: 2px;
 }

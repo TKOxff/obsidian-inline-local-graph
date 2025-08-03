@@ -10,6 +10,12 @@ export class InlineGraphView {
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'inline-graph-controls';
 
+        // Title (leftmost, semi-transparent)
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = 'Inline local graph';
+        titleSpan.className = 'inline-graph-title';
+        controlsDiv.appendChild(titleSpan);
+
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.className = 'inline-graph-zoom-btn';
         zoomOutBtn.textContent = '-';
