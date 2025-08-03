@@ -6,18 +6,7 @@ export class InlineGraphView {
 
     constructor(private app: any, private getSettings: () => any) {}
 
-    // New method: Render the graph into an arbitrary DOM container
-    renderTo(container: HTMLElement) {
-        // Remove all children safely (no innerHTML)
-        while (container.firstChild) {
-            container.removeChild(container.firstChild);
-        }
-
-        // Wrapper for graph and controls
-        const wrapperDiv = document.createElement('div');
-        wrapperDiv.className = 'inline-graph-wrapper';
-
-        // Controls container (zoom only, top row)
+    private createZoomControls(networkRef: { current: Network | null }): HTMLDivElement {
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'inline-graph-controls';
 
@@ -31,10 +20,26 @@ export class InlineGraphView {
         zoomInBtn.textContent = '+';
         zoomInBtn.title = 'Zoom In';
 
+        zoomInBtn.onclick = () => {
+            if (networkRef.current) {
+                const scale = networkRef.current.getScale();
+                networkRef.current.moveTo({ scale: Math.min(scale * 1.2, 5) });
+            }
+        };
+        zoomOutBtn.onclick = () => {
+            if (networkRef.current) {
+                const scale = networkRef.current.getScale();
+                networkRef.current.moveTo({ scale: Math.max(scale / 1.2, 0.2) });
+            }
+        };
+
         controlsDiv.appendChild(zoomOutBtn);
         controlsDiv.appendChild(zoomInBtn);
 
-        // Backlink switch (bottom row)
+        return controlsDiv;
+    }
+
+    private createBacklinkSwitch(container: HTMLElement): HTMLDivElement {
         const backlinkRowDiv = document.createElement('div');
         backlinkRowDiv.className = 'inline-graph-backlink-row';
 
@@ -46,7 +51,7 @@ export class InlineGraphView {
 
         const switchSlider = document.createElement('span');
         switchSlider.className = 'inline-graph-switch-slider';
-        // 상태에 따라 배경색/슬라이더 위치를 토글
+
         const updateSwitchUI = () => {
             if (this.getSettings().showBacklinks) {
                 switchSlider.classList.add('active');
@@ -66,6 +71,28 @@ export class InlineGraphView {
         switchLabel.appendChild(labelText);
         switchLabel.appendChild(switchSlider);
         backlinkRowDiv.appendChild(switchLabel);
+
+        return backlinkRowDiv;
+    }
+
+    renderTo(container: HTMLElement) {
+        // Remove all children safely (no innerHTML)
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+
+        // Wrapper for graph and controls
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.className = 'inline-graph-wrapper';
+
+        // Prepare a reference object for the network instance
+        const networkRef = { current: null as Network | null };
+
+        // Controls container (zoom only, top row)
+        const controlsDiv = this.createZoomControls(networkRef);
+
+        // Backlink switch (bottom row)
+        const backlinkRowDiv = this.createBacklinkSwitch(container);
 
         const graphDiv = document.createElement('div');
         graphDiv.className = 'inline-graph-vis';
@@ -167,16 +194,7 @@ export class InlineGraphView {
             interaction: { zoomView: false } // Disable mouse scroll zoom
         };
         const network = new Network(graphDiv, data, options);
-
-        // Manual zoom control
-        zoomInBtn.onclick = () => {
-            const scale = network.getScale();
-            network.moveTo({ scale: Math.min(scale * 1.2, 5) });
-        };
-        zoomOutBtn.onclick = () => {
-            const scale = network.getScale();
-            network.moveTo({ scale: Math.max(scale / 1.2, 0.2) });
-        };
+        networkRef.current = network;
 
         // Open the corresponding md file when a node is clicked
         network.on('click', (params) => {
