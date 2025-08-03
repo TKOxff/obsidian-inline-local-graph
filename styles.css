@@ -45,6 +45,32 @@ If your plugin does not need CSS, delete this file.
     opacity: 1;
 }
 
+.inline-graph-refresh-btn {
+    opacity: 1.0;
+    background: none;
+    border: none;
+    padding: 0 4px;
+    margin-right: 4px;
+    cursor: pointer;
+    color: var(--text-faint);
+    font-size: 1.2em;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    box-shadow: none;
+}
+
+.inline-graph-controls.show .inline-graph-refresh-btn,
+.inline-graph-refresh-btn:focus,
+.inline-graph-refresh-btn:hover {
+    opacity: 0.5;
+    color: var(--text-normal);
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
 .inline-graph-backlink-row {
     display: flex;
     justify-content: flex-end;

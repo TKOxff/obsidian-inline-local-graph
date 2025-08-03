@@ -16,6 +16,16 @@ export class InlineGraphView {
         titleSpan.className = 'inline-graph-title';
         controlsDiv.appendChild(titleSpan);
 
+        // Refresh button (유니코드 리프레시 기호)
+        const refreshBtn = document.createElement('button');
+        refreshBtn.className = 'inline-graph-refresh-btn';
+        refreshBtn.title = 'Refresh inline graph';
+        refreshBtn.textContent = '⟳';
+        refreshBtn.onclick = () => {
+            this.renderTo(container);
+        };
+        controlsDiv.appendChild(refreshBtn);
+
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.className = 'inline-graph-zoom-btn';
         zoomOutBtn.textContent = '-';
