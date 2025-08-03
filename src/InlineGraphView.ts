@@ -6,7 +6,7 @@ export class InlineGraphView {
 
     constructor(private app: any, private getSettings: () => any) {}
 
-    private createZoomControls(networkRef: { current: Network | null }): HTMLDivElement {
+    private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'inline-graph-controls';
 
@@ -26,13 +26,27 @@ export class InlineGraphView {
         zoomInBtn.textContent = '+';
         zoomInBtn.title = 'Zoom In';
 
+        const getNodeDistance = (scale: number) => Math.max(1, 80 / scale);
+        const getSpringLength = (scale: number) => Math.max(1, 80 / scale);
+
         zoomInBtn.onclick = async () => {
             if (networkRef.current) {
                 const scale = networkRef.current.getScale();
                 const newScale = Math.min(scale * 1.2, 5);
-                networkRef.current.moveTo({ scale: newScale });
                 this.getSettings().zoomScale = newScale;
-                // 설정 저장 함수 호출 (존재할 때만)
+
+                networkRef.current.moveTo({ scale: newScale });
+                networkRef.current.setOptions({
+                    physics: {
+                        enabled: true, // physics 활성화(unstabilized)
+                        repulsion: {
+                            nodeDistance: getNodeDistance(newScale),
+                            springLength: getSpringLength(newScale)
+                        }
+                    }
+                });
+                // networkRef.current.stabilize();
+
                 if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
                     await this.app.plugins.plugins["inline-local-graph"].saveSettings();
                 }
@@ -42,8 +56,20 @@ export class InlineGraphView {
             if (networkRef.current) {
                 const scale = networkRef.current.getScale();
                 const newScale = Math.max(scale / 1.2, 0.2);
-                networkRef.current.moveTo({ scale: newScale });
                 this.getSettings().zoomScale = newScale;
+
+                networkRef.current.moveTo({ scale: newScale });
+                networkRef.current.setOptions({
+                    physics: {
+                        enabled: true, // physics 활성화(unstabilized)
+                        repulsion: {
+                            nodeDistance: getNodeDistance(newScale),
+                            springLength: getSpringLength(newScale)
+                        }
+                    }
+                });
+                // networkRef.current.stabilize();
+
                 if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
                     await this.app.plugins.plugins["inline-local-graph"].saveSettings();
                 }
@@ -156,7 +182,11 @@ export class InlineGraphView {
         const showArrows = this.getSettings().showArrows ?? true;
         const nodeBgColor = this.getSettings().nodeBgColor ?? '#888888';
 
-        // Render the graph with vis-network
+        // 줌스케일에 따라 노드 간 거리 계산
+        const zoomScale = this.getSettings().zoomScale ?? 1.0;
+        const getNodeDistance = (scale: number) => Math.max(1, 80 / scale);
+        const getSpringLength = (scale: number) => Math.max(1, 80 / scale);
+
         const data = { nodes, edges };
         const options = {
             nodes: { shape: 'ellipse', color: nodeBgColor, font: { color: '#fff' } },
@@ -170,17 +200,24 @@ export class InlineGraphView {
                 }
             },
             layout: { improvedLayout: true },
-            physics: { enabled: true },
+            physics: {
+                enabled: true,
+                stabilization: { enabled: true, iterations: 100 },
+                solver: 'repulsion',
+                repulsion: {
+                    nodeDistance: getNodeDistance(zoomScale),
+                    springLength: getSpringLength(zoomScale),
+                    springConstant: 0.05,
+                    damping: 0.3
+                },
+                minVelocity: 0.75
+            },
             interaction: { zoomView: false }
         };
         const network = new Network(graphDiv, data, options);
         networkRef.current = network;
 
-        // 항상 settings.zoomScale 사용 (네트워크 생성 직후)
-        const zoomScale = this.getSettings().zoomScale ?? 1.0;
         network.moveTo({ scale: zoomScale });
-
-        // 네트워크가 완전히 그려진 후에도 한 번 더 적용
         network.once('afterDrawing', () => {
             network.moveTo({ scale: zoomScale });
         });
@@ -211,7 +248,7 @@ export class InlineGraphView {
         const networkRef = { current: null as Network | null };
 
         // Controls container (zoom only, top row)
-        const controlsDiv = this.createZoomControls(networkRef);
+        const controlsDiv = this.createZoomControls(networkRef, container);
 
         // Backlink switch (bottom row)
         const backlinkRowDiv = this.createBacklinkSwitch(container);

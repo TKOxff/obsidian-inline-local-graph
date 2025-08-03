@@ -86,7 +86,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 			.setDesc('Set the initial zoom scale for the inline graph (default: 1.0)')
 			.addSlider(slider => {
 				slider
-					.setLimits(0.2, 5.0, 0.01)
+					.setLimits(0.5, 5.0, 0.01)
 					.setValue(this.plugin.settings.zoomScale ?? 1.0)
 					.setDynamicTooltip()
 					.onChange(async (value) => {
