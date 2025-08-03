@@ -26,16 +26,27 @@ export class InlineGraphView {
         zoomInBtn.textContent = '+';
         zoomInBtn.title = 'Zoom In';
 
-        zoomInBtn.onclick = () => {
+        zoomInBtn.onclick = async () => {
             if (networkRef.current) {
                 const scale = networkRef.current.getScale();
-                networkRef.current.moveTo({ scale: Math.min(scale * 1.2, 5) });
+                const newScale = Math.min(scale * 1.2, 5);
+                networkRef.current.moveTo({ scale: newScale });
+                this.getSettings().zoomScale = newScale;
+                // 설정 저장 함수 호출 (존재할 때만)
+                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
+                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
+                }
             }
         };
-        zoomOutBtn.onclick = () => {
+        zoomOutBtn.onclick = async () => {
             if (networkRef.current) {
                 const scale = networkRef.current.getScale();
-                networkRef.current.moveTo({ scale: Math.max(scale / 1.2, 0.2) });
+                const newScale = Math.max(scale / 1.2, 0.2);
+                networkRef.current.moveTo({ scale: newScale });
+                this.getSettings().zoomScale = newScale;
+                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
+                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
+                }
             }
         };
 
@@ -164,6 +175,15 @@ export class InlineGraphView {
         };
         const network = new Network(graphDiv, data, options);
         networkRef.current = network;
+
+        // 항상 settings.zoomScale 사용 (네트워크 생성 직후)
+        const zoomScale = this.getSettings().zoomScale ?? 1.0;
+        network.moveTo({ scale: zoomScale });
+
+        // 네트워크가 완전히 그려진 후에도 한 번 더 적용
+        network.once('afterDrawing', () => {
+            network.moveTo({ scale: zoomScale });
+        });
 
         // Open the corresponding md file when a node is clicked
         network.on('click', (params) => {

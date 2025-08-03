@@ -9,6 +9,7 @@ interface MyPluginSettings {
     showGraphBorder: boolean;
     showBacklinks: boolean; // Option to toggle backlinks
     skipImageLinks: boolean; // New option to toggle image link skipping
+    zoomScale?: number; // 추가
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -18,6 +19,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
     showGraphBorder: true,
     showBacklinks: true, // Default: show backlinks
     skipImageLinks: true, // Default: skip image links
+    zoomScale: 1.0, // 기본값
 }
 
 // InlineGraph == InlineLocalGraph
