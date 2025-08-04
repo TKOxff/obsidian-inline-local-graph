@@ -10,12 +10,6 @@ export class InlineGraphView {
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'inline-graph-controls';
 
-        // Title (leftmost, semi-transparent)
-        const titleSpan = document.createElement('span');
-        titleSpan.textContent = 'Inline local graph';
-        titleSpan.className = 'inline-graph-title';
-        controlsDiv.appendChild(titleSpan);
-
         // Refresh button (유니코드 리프레시 기호)
         const refreshBtn = document.createElement('button');
         refreshBtn.className = 'inline-graph-refresh-btn';
@@ -212,7 +206,7 @@ export class InlineGraphView {
             layout: { improvedLayout: true },
             physics: {
                 enabled: true,
-                stabilization: { enabled: true, iterations: 100 },
+                stabilization: { enabled: true, iterations: 200 },
                 solver: 'repulsion',
                 repulsion: {
                     nodeDistance: getNodeDistance(zoomScale),

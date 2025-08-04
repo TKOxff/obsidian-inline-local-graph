@@ -15,7 +15,7 @@ If your plugin does not need CSS, delete this file.
     display: flex;
     justify-content: flex-end;
     gap: 8px;
-    margin-bottom: 4px;
+    margin-bottom: 0px;
     opacity: 0;
     transition: opacity 0.2s;
 }
@@ -74,8 +74,8 @@ If your plugin does not need CSS, delete this file.
 .inline-graph-backlink-row {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 4px;
-    margin-top: 10px; /* 줌 UI와의 위쪽 여백 */
+    margin-bottom: 0px;
+    margin-top: 5px; /* 줌 UI와의 위쪽 여백 */
     opacity: 0;
     transition: opacity 0.2s;
 }
@@ -135,13 +135,4 @@ If your plugin does not need CSS, delete this file.
 .inline-graph-switch-slider.active:before {
     transform: translateX(16px);
     background: var(--background-primary);
-}
-
-.inline-graph-title {
-    opacity: 0.5;
-    font-size: 1em;
-    margin-right: auto;
-    align-self: center;
-    letter-spacing: 0.02em;
-    padding-left: 2px;
 }
