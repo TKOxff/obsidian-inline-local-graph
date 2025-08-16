@@ -9,6 +9,7 @@ interface MyPluginSettings {
     showGraphBorder: boolean;
     showBacklinks: boolean; // Option to toggle backlinks
     skipImageLinks: boolean; // New option to toggle image link skipping
+    zoomScale?: number;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -18,6 +19,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
     showGraphBorder: true,
     showBacklinks: true, // Default: show backlinks
     skipImageLinks: true, // Default: skip image links
+    zoomScale: 1.0,
 }
 
 // InlineGraph == InlineLocalGraph
@@ -109,13 +111,12 @@ export default class InlineGraphPlugin extends Plugin {
 		}
 
 		// Apply styles based on settings
-		graphContainer.style.marginTop = '2em';
 		if (this.settings.showGraphBorder) {
-			graphContainer.style.border = '1px solid #888';
-			graphContainer.style.padding = '1em';
+			graphContainer.classList.add('show-border');
+			graphContainer.classList.remove('no-border');
 		} else {
-			graphContainer.style.border = 'none';
-			graphContainer.style.padding = '0';
+			graphContainer.classList.add('no-border');
+			graphContainer.classList.remove('show-border');
 		}
 
 		this.graphView.renderTo(graphContainer as HTMLElement);

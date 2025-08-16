@@ -15,7 +15,7 @@ If your plugin does not need CSS, delete this file.
     display: flex;
     justify-content: flex-end;
     gap: 8px;
-    margin-bottom: 4px;
+    margin-bottom: 0px;
     opacity: 0;
     transition: opacity 0.2s;
 }
@@ -25,12 +25,130 @@ If your plugin does not need CSS, delete this file.
 }
 
 .inline-graph-zoom-btn {
-    width: 32px;
+    width: auto;
+    min-width: 32px;
     cursor: pointer;
+    padding: 0 8px;
+    border-radius: 4px;
+    border: 1px solid var(--background-modifier-border);
+    background: var(--background-secondary);
+    color: var(--text-normal);
+    font-size: 0.9em;
+    height: 32px;
+    transition: background 0.2s, opacity 0.2s;
+    opacity: 0;
+}
+
+.inline-graph-controls.show .inline-graph-zoom-btn,
+.inline-graph-zoom-btn:focus,
+.inline-graph-zoom-btn:hover {
+    opacity: 1;
+}
+
+.inline-graph-refresh-btn {
+    opacity: 1.0;
+    background: none;
+    border: none;
+    padding: 0 4px;
+    margin-right: 4px;
+    cursor: pointer;
+    color: var(--text-faint);
+    font-size: 1.2em;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    box-shadow: none;
+}
+
+.inline-graph-controls.show .inline-graph-refresh-btn,
+.inline-graph-refresh-btn:focus,
+.inline-graph-refresh-btn:hover {
+    opacity: 0.5;
+    color: var(--text-normal);
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.inline-graph-backlink-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0px;
+    margin-top: 5px; /* 줌 UI와의 위쪽 여백 */
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.inline-graph-backlink-row.show {
+    opacity: 1;
 }
 
 .inline-graph-vis {
     width: 100%;
     height: 500px;
     position: relative;
+}
+
+/* 인라인 그래프 컨테이너 스타일 */
+.inline-graph-container {
+    margin-top: 2em;
+}
+
+/* 그래프 테두리 표시 여부 */
+.inline-graph-container.show-border {
+    border: 1px solid var(--background-modifier-border);
+    padding: 1em;
+}
+
+.inline-graph-container.no-border {
+    border: none;
+    padding: 0;
+}
+
+.inline-graph-switch-label {
+    font-size: 0.95em;
+    color: var(--text-normal);
+    user-select: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.inline-graph-switch-label span:first-child {
+    opacity: 0.5;
+    margin-right: 2px; /* 텍스트와 스위치 사이 2px만 여백 */
+}
+
+/* 스위치 스타일 (.active로 토글) */
+.inline-graph-switch-slider {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+    background: var(--background-modifier-border);
+    border-radius: 12px;
+    transition: background 0.2s;
+    vertical-align: middle;
+    margin-left: 2px;
+    cursor: pointer;
+}
+.inline-graph-switch-slider:before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 14px;
+    height: 14px;
+    background: var(--background-secondary);
+    border-radius: 50%;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+}
+.inline-graph-switch-slider.active {
+    background: var(--interactive-accent);
+}
+.inline-graph-switch-slider.active:before {
+    transform: translateX(16px);
+    background: var(--background-primary);
 }
