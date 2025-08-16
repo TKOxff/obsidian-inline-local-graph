@@ -90,6 +90,22 @@ If your plugin does not need CSS, delete this file.
     position: relative;
 }
 
+/* 인라인 그래프 컨테이너 스타일 */
+.inline-graph-container {
+    margin-top: 2em;
+}
+
+/* 그래프 테두리 표시 여부 */
+.inline-graph-container.show-border {
+    border: 1px solid var(--background-modifier-border);
+    padding: 1em;
+}
+
+.inline-graph-container.no-border {
+    border: none;
+    padding: 0;
+}
+
 .inline-graph-switch-label {
     font-size: 0.95em;
     color: var(--text-normal);

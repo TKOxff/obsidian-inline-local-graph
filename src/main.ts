@@ -111,13 +111,12 @@ export default class InlineGraphPlugin extends Plugin {
 		}
 
 		// Apply styles based on settings
-		graphContainer.style.marginTop = '2em';
 		if (this.settings.showGraphBorder) {
-			graphContainer.style.border = '1px solid #888';
-			graphContainer.style.padding = '1em';
+			graphContainer.classList.add('show-border');
+			graphContainer.classList.remove('no-border');
 		} else {
-			graphContainer.style.border = 'none';
-			graphContainer.style.padding = '0';
+			graphContainer.classList.add('no-border');
+			graphContainer.classList.remove('show-border');
 		}
 
 		this.graphView.renderTo(graphContainer as HTMLElement);
