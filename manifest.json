@@ -1,7 +1,7 @@
 {
 	"id": "inline-local-graph",
 	"name": "Inline Local Graph",
-	"version": "0.9.2",
+	"version": "0.9.3",
 	"minAppVersion": "0.15.0",
 	"description": "A plugin that allows you to visualize the local graph inline within your notes.",
 	"author": "TKOxff <tkoxff@gmail.com>",
