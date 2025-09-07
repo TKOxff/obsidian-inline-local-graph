@@ -10,6 +10,35 @@ export class InlineGraphView {
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'inline-graph-controls';
 
+        const switchLabel = document.createElement('label');
+        switchLabel.className = 'inline-graph-switch-label';
+
+        const labelText = document.createElement('span');
+        labelText.textContent = 'backlinks';
+
+        const switchSlider = document.createElement('span');
+        switchSlider.className = 'inline-graph-switch-slider';
+
+        const updateSwitchUI = () => {
+            if (this.getSettings().showBacklinks) {
+                switchSlider.classList.add('active');
+            } else {
+                switchSlider.classList.remove('active');
+            }
+        };
+        updateSwitchUI();
+
+        switchSlider.onclick = () => {
+            const settings = this.getSettings();
+            settings.showBacklinks = !settings.showBacklinks;
+            updateSwitchUI();
+            this.renderTo(container);
+        };
+
+        switchLabel.appendChild(labelText);
+        switchLabel.appendChild(switchSlider);
+        controlsDiv.appendChild(switchLabel);
+
         // Refresh button (유니코드 리프레시 기호)
         const refreshBtn = document.createElement('button');
         refreshBtn.className = 'inline-graph-refresh-btn';
@@ -82,6 +111,7 @@ export class InlineGraphView {
 
         controlsDiv.appendChild(zoomOutBtn);
         controlsDiv.appendChild(zoomInBtn);
+        // controlsDiv.appendChild(switchLabel);
 
         return controlsDiv;
     }
@@ -254,9 +284,6 @@ export class InlineGraphView {
         // Controls container (zoom only, top row)
         const controlsDiv = this.createZoomControls(networkRef, container);
 
-        // Backlink switch (bottom row)
-        const backlinkRowDiv = this.createBacklinkSwitch(container);
-
         // Graph container
         const graphDiv = document.createElement('div');
         graphDiv.className = 'inline-graph-vis';
@@ -264,15 +291,12 @@ export class InlineGraphView {
         // Hover logic: show controls only when mouse is over wrapperDiv
         wrapperDiv.onmouseenter = () => {
             controlsDiv.classList.add('show');
-            backlinkRowDiv.classList.add('show');
         };
         wrapperDiv.onmouseleave = () => {
             controlsDiv.classList.remove('show');
-            backlinkRowDiv.classList.remove('show');
         };
 
         wrapperDiv.appendChild(controlsDiv);
-        wrapperDiv.appendChild(backlinkRowDiv);
         wrapperDiv.appendChild(graphDiv);
         container.appendChild(wrapperDiv);
 
