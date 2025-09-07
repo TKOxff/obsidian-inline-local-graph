@@ -39,6 +39,10 @@ export class InlineGraphView {
         switchLabel.appendChild(switchSlider);
         controlsDiv.appendChild(switchLabel);
 
+        const leftDivider = document.createElement('span');
+        leftDivider.className = 'inline-graph-divider';
+        controlsDiv.appendChild(leftDivider);
+
         // Refresh button (유니코드 리프레시 기호)
         const refreshBtn = document.createElement('button');
         refreshBtn.className = 'inline-graph-refresh-btn';
@@ -48,6 +52,10 @@ export class InlineGraphView {
             this.renderTo(container);
         };
         controlsDiv.appendChild(refreshBtn);
+
+        const rightDivider = document.createElement('span');
+        rightDivider.className = 'inline-graph-divider';
+        controlsDiv.appendChild(rightDivider);
 
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.className = 'inline-graph-zoom-btn';
@@ -111,45 +119,8 @@ export class InlineGraphView {
 
         controlsDiv.appendChild(zoomOutBtn);
         controlsDiv.appendChild(zoomInBtn);
-        // controlsDiv.appendChild(switchLabel);
 
         return controlsDiv;
-    }
-
-    private createBacklinkSwitch(container: HTMLElement): HTMLDivElement {
-        const backlinkRowDiv = document.createElement('div');
-        backlinkRowDiv.className = 'inline-graph-backlink-row';
-
-        const switchLabel = document.createElement('label');
-        switchLabel.className = 'inline-graph-switch-label';
-
-        const labelText = document.createElement('span');
-        labelText.textContent = 'backlinks';
-
-        const switchSlider = document.createElement('span');
-        switchSlider.className = 'inline-graph-switch-slider';
-
-        const updateSwitchUI = () => {
-            if (this.getSettings().showBacklinks) {
-                switchSlider.classList.add('active');
-            } else {
-                switchSlider.classList.remove('active');
-            }
-        };
-        updateSwitchUI();
-
-        switchSlider.onclick = () => {
-            const settings = this.getSettings();
-            settings.showBacklinks = !settings.showBacklinks;
-            updateSwitchUI();
-            this.renderTo(container);
-        };
-
-        switchLabel.appendChild(labelText);
-        switchLabel.appendChild(switchSlider);
-        backlinkRowDiv.appendChild(switchLabel);
-
-        return backlinkRowDiv;
     }
 
     private renderGraph(graphDiv: HTMLElement, networkRef: { current: Network | null }) {

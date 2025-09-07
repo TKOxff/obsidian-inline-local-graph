@@ -71,6 +71,21 @@ If your plugin does not need CSS, delete this file.
     box-shadow: none;
 }
 
+/* 수직 구분선 스타일 */
+.inline-graph-divider {
+    width: 1px;
+    height: 16px; /* 높이 조정 */
+    background-color: var(--background-modifier-border);
+    margin: 0 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    align-self: center; /* 수직 중앙 정렬 */
+}
+
+.inline-graph-controls.show .inline-graph-divider {
+    opacity: 0.5;
+}
+
 .inline-graph-backlink-row {
     display: flex;
     justify-content: flex-end;
