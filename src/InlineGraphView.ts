@@ -1,4 +1,4 @@
-import { WorkspaceLeaf, Notice, TFile } from 'obsidian';
+import { WorkspaceLeaf } from 'obsidian';
 import { Network } from 'vis-network/standalone';
 
 export class InlineGraphView {

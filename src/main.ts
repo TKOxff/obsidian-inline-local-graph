@@ -1,4 +1,4 @@
-import { App, Plugin, debounce, MarkdownView } from 'obsidian';
+import { Plugin, debounce, MarkdownView } from 'obsidian';
 import { InlineGraphView } from './InlineGraphView';
 import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
