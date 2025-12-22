@@ -30,7 +30,7 @@ export default class InlineGraphPlugin extends Plugin {
 	isGraphVisible: boolean = true; // default: visible
 
 	async onload() {
-		console.log('Loading Inline Graph Plugin');
+		console.debug('Loading Inline Graph Plugin');
 
 		await this.loadSettings();
 		this.graphView = new InlineGraphView(this.app, () => this.settings);
@@ -67,14 +67,14 @@ export default class InlineGraphPlugin extends Plugin {
 
 	// Add .inline-graph-container div to show the inline graph
 	showInlineGraphInEditor(view?: MarkdownView | null) {
-		console.log("showInlineGraphInEditor Begin");
+		console.debug("showInlineGraphInEditor Begin");
 
 		if (!view) {
 			view = this.app.workspace.getActiveViewOfType(MarkdownView);
 		}
 
 		if (!view) {
-			console.log("showInlineGraphInEditor - Not a markdown view");
+			console.debug("showInlineGraphInEditor - Not a markdown view");
 			return; // Not a markdown view
 		}
 
@@ -88,7 +88,7 @@ export default class InlineGraphPlugin extends Plugin {
 		}
 
 		if (!parentEl) {
-			console.log("showInlineGraphInEditor Not found parentEl");
+			console.debug("showInlineGraphInEditor Not found parentEl");
 			return;
 		}
 
@@ -139,7 +139,7 @@ export default class InlineGraphPlugin extends Plugin {
 	}
 
 	onunload() {
-		console.log('Unloading Inline Graph Plugin');
+		console.debug('Unloading Inline Graph Plugin');
 		this.observer.disconnect();
 		// Remove all graphs when the plugin is deactivated
 		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {

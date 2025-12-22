@@ -15,8 +15,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		console.log("Displaying settings tab. Plugin instance:", this.plugin);
-		console.log("Plugin settings:", this.plugin.settings);
+		console.debug("Displaying settings tab. Plugin instance:", this.plugin);
+		console.debug("Plugin settings:", this.plugin.settings);
 
 		if (!this.plugin.settings) {
 			console.error("Plugin settings are not loaded!");
