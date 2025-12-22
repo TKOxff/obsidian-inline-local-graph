@@ -66,7 +66,7 @@ export default class InlineGraphPlugin extends Plugin {
 	}
 
 	// Add .inline-graph-container div to show the inline graph
-	showInlineGraphInEditor(view?: MarkdownView) {
+	showInlineGraphInEditor(view?: MarkdownView | null) {
 		console.log("showInlineGraphInEditor Begin");
 
 		if (!view) {
