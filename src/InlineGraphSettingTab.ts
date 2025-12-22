@@ -26,7 +26,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Show arrows on edges')
-			.setDesc('Toggle arrow display on graph edges')
+			.setDesc('Toggle arrow display on graph edges.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showArrows)
 				.onChange(async (value) => {
@@ -37,7 +37,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
                 
         new Setting(containerEl)
             .setName('Show graph border')
-            .setDesc('Toggle the border around the graph container')
+            .setDesc('Toggle the border around the graph container.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.showGraphBorder)
                 .onChange(async (value) => {
@@ -48,7 +48,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Node background color')
-			.setDesc('Set the background color of graph nodes')
+			.setDesc('Set the background color of graph nodes.')
 			.addText(text => text
 				.setValue(this.plugin.settings.nodeBgColor)
 				.setPlaceholder('#888888')
@@ -60,7 +60,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 			.inputEl.setAttribute('type', 'color'));
 
 		new Setting(containerEl)
-			.setName('Show Backlinks')
+			.setName('Show backlinks')
 			.setDesc('Toggle whether to display backlinks in the graph.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showBacklinks)
@@ -71,7 +71,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Skip Image Links')
+			.setName('Skip image links')
 			.setDesc('Toggle whether to exclude image files from the graph.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.skipImageLinks)
@@ -82,8 +82,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Initial Zoom')
-			.setDesc('Set the initial zoom scale for the inline graph (default: 1.0)')
+			.setName('Initial zoom')
+			.setDesc('Set the initial zoom scale for the inline graph (default: 1.0).')
 			.addSlider(slider => {
 				slider
 					.setLimits(0.5, 5.0, 0.01)

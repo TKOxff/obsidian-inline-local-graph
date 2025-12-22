@@ -1,10 +1,11 @@
-import { WorkspaceLeaf } from 'obsidian';
+import { App, WorkspaceLeaf } from 'obsidian';
+import { InlineGraphSettings } from "./main";
 import { Network } from 'vis-network/standalone';
 
 export class InlineGraphView {
     private leaf: WorkspaceLeaf | null = null;
 
-    constructor(private app: any, private getSettings: () => any) { }
+    constructor(private app: App, private getSettings: () => InlineGraphSettings) { }
 
     private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
         const controlsDiv = document.createElement('div');
@@ -14,7 +15,7 @@ export class InlineGraphView {
         switchLabel.className = 'inline-graph-switch-label';
 
         const labelText = document.createElement('span');
-        labelText.textContent = 'backlinks';
+        labelText.textContent = 'Backlinks';
 
         const switchSlider = document.createElement('span');
         switchSlider.className = 'inline-graph-switch-slider';
@@ -60,12 +61,12 @@ export class InlineGraphView {
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.className = 'inline-graph-zoom-btn';
         zoomOutBtn.textContent = '-';
-        zoomOutBtn.title = 'Zoom Out';
+        zoomOutBtn.title = 'Zoom out';
 
         const zoomInBtn = document.createElement('button');
         zoomInBtn.className = 'inline-graph-zoom-btn';
         zoomInBtn.textContent = '+';
-        zoomInBtn.title = 'Zoom In';
+        zoomInBtn.title = 'Zoom in';
 
         const getNodeDistance = (scale: number) => Math.max(1, 80 / scale);
         const getSpringLength = (scale: number) => Math.max(1, 80 / scale);

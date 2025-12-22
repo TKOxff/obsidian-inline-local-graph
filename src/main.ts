@@ -2,7 +2,7 @@ import { Plugin, debounce, MarkdownView } from 'obsidian';
 import { InlineGraphView } from './InlineGraphView';
 import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
-interface MyPluginSettings {
+export interface InlineGraphSettings {
 	mySetting: string;
 	showArrows: boolean;
 	nodeBgColor: string;
@@ -12,7 +12,7 @@ interface MyPluginSettings {
 	zoomScale?: number;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: InlineGraphSettings = {
 	mySetting: 'default',
 	showArrows: true,
 	nodeBgColor: '#888888',
@@ -24,7 +24,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 
 // InlineGraph == InlineLocalGraph
 export default class InlineGraphPlugin extends Plugin {
-	settings: MyPluginSettings;
+	settings: InlineGraphSettings;
 	private graphView: InlineGraphView;
 	private observer: MutationObserver;
 	isGraphVisible: boolean = true; // default: visible
@@ -49,7 +49,7 @@ export default class InlineGraphPlugin extends Plugin {
 		this.observer = new MutationObserver(debouncedUpdate);
 		this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true });
 
-		const ribbonIconEl = this.addRibbonIcon('waypoints', 'Toggle Inline local graph', () => {
+		const ribbonIconEl = this.addRibbonIcon('waypoints', 'Toggle inline local graph', () => {
 			this.toggleInlineGraphInEditor();
 		});
 		ribbonIconEl.addClass('inline-graph-ribbon-class');
