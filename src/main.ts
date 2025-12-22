@@ -66,15 +66,17 @@ export default class InlineGraphPlugin extends Plugin {
 	}
 
 	// Add .inline-graph-container div to show the inline graph
-	showInlineGraphInEditor() {
+	showInlineGraphInEditor(view?: MarkdownView) {
 		console.log("showInlineGraphInEditor Begin");
 
-		const activeLeaf = this.app.workspace.activeLeaf;
-		if (!activeLeaf || !(activeLeaf.view instanceof MarkdownView)) {
+		if (!view) {
+			view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		}
+
+		if (!view) {
 			console.log("showInlineGraphInEditor - Not a markdown view");
 			return; // Not a markdown view
 		}
-		const view = activeLeaf.view;
 
 		let parentEl: Element | null = null;
 		const mode = view.getMode();
@@ -131,10 +133,7 @@ export default class InlineGraphPlugin extends Plugin {
 	updateGraphs() {
 		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
 			if (leaf.view instanceof MarkdownView) {
-				const activeLeaf = this.app.workspace.activeLeaf;
-				this.app.workspace.activeLeaf = leaf;
-				this.showInlineGraphInEditor();
-				this.app.workspace.activeLeaf = activeLeaf;
+				this.showInlineGraphInEditor(leaf.view);
 			}
 		});
 	}
