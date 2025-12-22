@@ -4,22 +4,22 @@ import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
 interface MyPluginSettings {
 	mySetting: string;
-    showArrows: boolean;
-    nodeBgColor: string;
-    showGraphBorder: boolean;
-    showBacklinks: boolean; // Option to toggle backlinks
-    skipImageLinks: boolean; // New option to toggle image link skipping
-    zoomScale?: number;
+	showArrows: boolean;
+	nodeBgColor: string;
+	showGraphBorder: boolean;
+	showBacklinks: boolean; // Option to toggle backlinks
+	skipImageLinks: boolean; // New option to toggle image link skipping
+	zoomScale?: number;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default',
-    showArrows: true,
-    nodeBgColor: '#888888',
-    showGraphBorder: true,
-    showBacklinks: true, // Default: show backlinks
-    skipImageLinks: true, // Default: skip image links
-    zoomScale: 1.0,
+	showArrows: true,
+	nodeBgColor: '#888888',
+	showGraphBorder: true,
+	showBacklinks: true, // Default: show backlinks
+	skipImageLinks: true, // Default: skip image links
+	zoomScale: 1.0,
 }
 
 // InlineGraph == InlineLocalGraph
@@ -27,12 +27,10 @@ export default class InlineGraphPlugin extends Plugin {
 	settings: MyPluginSettings;
 	private graphView: InlineGraphView;
 	private observer: MutationObserver;
-    isGraphVisible: boolean = true; // default: visible
+	isGraphVisible: boolean = true; // default: visible
 
 	async onload() {
 		console.log('Loading Inline Graph Plugin');
-
-		this.registerStyles();
 
 		await this.loadSettings();
 		this.graphView = new InlineGraphView(this.app, () => this.settings);
@@ -50,7 +48,7 @@ export default class InlineGraphPlugin extends Plugin {
 
 		this.observer = new MutationObserver(debouncedUpdate);
 		this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true });
-		
+
 		const ribbonIconEl = this.addRibbonIcon('waypoints', 'Toggle Inline local graph', () => {
 			this.toggleInlineGraphInEditor();
 		});
@@ -65,16 +63,6 @@ export default class InlineGraphPlugin extends Plugin {
 
 		// Add settings tab
 		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
-	}
-
-	registerStyles() {
-		const styleEl = document.createElement('link');
-		styleEl.rel = 'stylesheet';
-		styleEl.type = 'text/css';
-		styleEl.href = this.app.vault.adapter.getResourcePath(
-			this.manifest.dir + '/styles.css'
-		);
-		document.head.appendChild(styleEl);
 	}
 
 	// Add .inline-graph-container div to show the inline graph
