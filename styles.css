@@ -71,11 +71,26 @@ If your plugin does not need CSS, delete this file.
     box-shadow: none;
 }
 
+/* Vertical divider style */
+.inline-graph-divider {
+    width: 1px;
+    height: 16px; /* Height adjustment */
+    background-color: var(--background-modifier-border);
+    margin: 0 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    align-self: center; /* Vertical center alignment */
+}
+
+.inline-graph-controls.show .inline-graph-divider {
+    opacity: 0.5;
+}
+
 .inline-graph-backlink-row {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 0px;
-    margin-top: 5px; /* 줌 UI와의 위쪽 여백 */
+    margin-top: 5px; /* Top margin from zoom UI */
     opacity: 0;
     transition: opacity 0.2s;
 }
@@ -90,12 +105,12 @@ If your plugin does not need CSS, delete this file.
     position: relative;
 }
 
-/* 인라인 그래프 컨테이너 스타일 */
+/* Inline graph container style */
 .inline-graph-container {
     margin-top: 2em;
 }
 
-/* 그래프 테두리 표시 여부 */
+/* Whether to show graph border */
 .inline-graph-container.show-border {
     border: 1px solid var(--background-modifier-border);
     padding: 1em;
@@ -117,10 +132,10 @@ If your plugin does not need CSS, delete this file.
 
 .inline-graph-switch-label span:first-child {
     opacity: 0.5;
-    margin-right: 2px; /* 텍스트와 스위치 사이 2px만 여백 */
+    margin-right: 2px; /* 2px margin between text and switch */
 }
 
-/* 스위치 스타일 (.active로 토글) */
+/* Switch style (toggle with .active) */
 .inline-graph-switch-slider {
     position: relative;
     display: inline-block;

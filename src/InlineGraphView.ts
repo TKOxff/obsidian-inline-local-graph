@@ -1,100 +1,21 @@
-import { WorkspaceLeaf, Notice, TFile } from 'obsidian';
+import { App, WorkspaceLeaf } from 'obsidian';
+import { InlineGraphSettings } from "./main";
 import { Network } from 'vis-network/standalone';
 
 export class InlineGraphView {
     private leaf: WorkspaceLeaf | null = null;
 
-    constructor(private app: any, private getSettings: () => any) {}
+    constructor(private app: App, private getSettings: () => InlineGraphSettings) { }
 
     private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'inline-graph-controls';
 
-        // Refresh button (유니코드 리프레시 기호)
-        const refreshBtn = document.createElement('button');
-        refreshBtn.className = 'inline-graph-refresh-btn';
-        refreshBtn.title = 'Refresh inline graph';
-        refreshBtn.textContent = '⟳';
-        refreshBtn.onclick = () => {
-            this.renderTo(container);
-        };
-        controlsDiv.appendChild(refreshBtn);
-
-        const zoomOutBtn = document.createElement('button');
-        zoomOutBtn.className = 'inline-graph-zoom-btn';
-        zoomOutBtn.textContent = '-';
-        zoomOutBtn.title = 'Zoom Out';
-
-        const zoomInBtn = document.createElement('button');
-        zoomInBtn.className = 'inline-graph-zoom-btn';
-        zoomInBtn.textContent = '+';
-        zoomInBtn.title = 'Zoom In';
-
-        const getNodeDistance = (scale: number) => Math.max(1, 80 / scale);
-        const getSpringLength = (scale: number) => Math.max(1, 80 / scale);
-
-        zoomInBtn.onclick = async () => {
-            if (networkRef.current) {
-                const scale = networkRef.current.getScale();
-                const newScale = Math.min(scale * 1.2, 5);
-                this.getSettings().zoomScale = newScale;
-
-                networkRef.current.moveTo({ scale: newScale });
-                networkRef.current.setOptions({
-                    physics: {
-                        enabled: true, // physics 활성화(unstabilized)
-                        repulsion: {
-                            nodeDistance: getNodeDistance(newScale),
-                            springLength: getSpringLength(newScale)
-                        }
-                    }
-                });
-                // networkRef.current.stabilize();
-
-                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
-                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
-                }
-            }
-        };
-        zoomOutBtn.onclick = async () => {
-            if (networkRef.current) {
-                const scale = networkRef.current.getScale();
-                const newScale = Math.max(scale / 1.2, 0.2);
-                this.getSettings().zoomScale = newScale;
-
-                networkRef.current.moveTo({ scale: newScale });
-                networkRef.current.setOptions({
-                    physics: {
-                        enabled: true, // physics 활성화(unstabilized)
-                        repulsion: {
-                            nodeDistance: getNodeDistance(newScale),
-                            springLength: getSpringLength(newScale)
-                        }
-                    }
-                });
-                // networkRef.current.stabilize();
-
-                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
-                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
-                }
-            }
-        };
-
-        controlsDiv.appendChild(zoomOutBtn);
-        controlsDiv.appendChild(zoomInBtn);
-
-        return controlsDiv;
-    }
-
-    private createBacklinkSwitch(container: HTMLElement): HTMLDivElement {
-        const backlinkRowDiv = document.createElement('div');
-        backlinkRowDiv.className = 'inline-graph-backlink-row';
-
         const switchLabel = document.createElement('label');
         switchLabel.className = 'inline-graph-switch-label';
 
         const labelText = document.createElement('span');
-        labelText.textContent = 'backlinks';
+        labelText.textContent = 'Backlinks';
 
         const switchSlider = document.createElement('span');
         switchSlider.className = 'inline-graph-switch-slider';
@@ -117,9 +38,90 @@ export class InlineGraphView {
 
         switchLabel.appendChild(labelText);
         switchLabel.appendChild(switchSlider);
-        backlinkRowDiv.appendChild(switchLabel);
+        controlsDiv.appendChild(switchLabel);
 
-        return backlinkRowDiv;
+        const leftDivider = document.createElement('span');
+        leftDivider.className = 'inline-graph-divider';
+        controlsDiv.appendChild(leftDivider);
+
+        // Refresh button (Unicode refresh symbol)
+        const refreshBtn = document.createElement('button');
+        refreshBtn.className = 'inline-graph-refresh-btn';
+        refreshBtn.title = 'Refresh inline graph';
+        refreshBtn.textContent = '⟳';
+        refreshBtn.onclick = () => {
+            this.renderTo(container);
+        };
+        controlsDiv.appendChild(refreshBtn);
+
+        const rightDivider = document.createElement('span');
+        rightDivider.className = 'inline-graph-divider';
+        controlsDiv.appendChild(rightDivider);
+
+        const zoomOutBtn = document.createElement('button');
+        zoomOutBtn.className = 'inline-graph-zoom-btn';
+        zoomOutBtn.textContent = '-';
+        zoomOutBtn.title = 'Zoom out';
+
+        const zoomInBtn = document.createElement('button');
+        zoomInBtn.className = 'inline-graph-zoom-btn';
+        zoomInBtn.textContent = '+';
+        zoomInBtn.title = 'Zoom in';
+
+        const getNodeDistance = (scale: number) => Math.max(1, 80 / scale);
+        const getSpringLength = (scale: number) => Math.max(1, 80 / scale);
+
+        zoomInBtn.onclick = async () => {
+            if (networkRef.current) {
+                const scale = networkRef.current.getScale();
+                const newScale = Math.min(scale * 1.2, 5);
+                this.getSettings().zoomScale = newScale;
+
+                networkRef.current.moveTo({ scale: newScale });
+                networkRef.current.setOptions({
+                    physics: {
+                        enabled: true, // physics enabled (unstabilized)
+                        repulsion: {
+                            nodeDistance: getNodeDistance(newScale),
+                            springLength: getSpringLength(newScale)
+                        }
+                    }
+                });
+                // networkRef.current.stabilize();
+
+                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
+                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
+                }
+            }
+        };
+        zoomOutBtn.onclick = async () => {
+            if (networkRef.current) {
+                const scale = networkRef.current.getScale();
+                const newScale = Math.max(scale / 1.2, 0.2);
+                this.getSettings().zoomScale = newScale;
+
+                networkRef.current.moveTo({ scale: newScale });
+                networkRef.current.setOptions({
+                    physics: {
+                        enabled: true, // physics enabled (unstabilized)
+                        repulsion: {
+                            nodeDistance: getNodeDistance(newScale),
+                            springLength: getSpringLength(newScale)
+                        }
+                    }
+                });
+                // networkRef.current.stabilize();
+
+                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
+                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
+                }
+            }
+        };
+
+        controlsDiv.appendChild(zoomOutBtn);
+        controlsDiv.appendChild(zoomInBtn);
+
+        return controlsDiv;
     }
 
     private renderGraph(graphDiv: HTMLElement, networkRef: { current: Network | null }) {
@@ -186,7 +188,7 @@ export class InlineGraphView {
         const showArrows = this.getSettings().showArrows ?? true;
         const nodeBgColor = this.getSettings().nodeBgColor ?? '#888888';
 
-        // 줌스케일에 따라 노드 간 거리 계산
+        // Calculate node distance based on zoom scale
         const zoomScale = this.getSettings().zoomScale ?? 1.0;
         const getNodeDistance = (scale: number) => Math.max(1, 80 / scale);
         const getSpringLength = (scale: number) => Math.max(1, 80 / scale);
@@ -239,7 +241,7 @@ export class InlineGraphView {
     }
 
     renderTo(container: HTMLElement) {
-        // Remove all children safely (no innerHTML)
+        // Remove all children safely
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
@@ -254,9 +256,6 @@ export class InlineGraphView {
         // Controls container (zoom only, top row)
         const controlsDiv = this.createZoomControls(networkRef, container);
 
-        // Backlink switch (bottom row)
-        const backlinkRowDiv = this.createBacklinkSwitch(container);
-
         // Graph container
         const graphDiv = document.createElement('div');
         graphDiv.className = 'inline-graph-vis';
@@ -264,19 +263,16 @@ export class InlineGraphView {
         // Hover logic: show controls only when mouse is over wrapperDiv
         wrapperDiv.onmouseenter = () => {
             controlsDiv.classList.add('show');
-            backlinkRowDiv.classList.add('show');
         };
         wrapperDiv.onmouseleave = () => {
             controlsDiv.classList.remove('show');
-            backlinkRowDiv.classList.remove('show');
         };
 
         wrapperDiv.appendChild(controlsDiv);
-        wrapperDiv.appendChild(backlinkRowDiv);
         wrapperDiv.appendChild(graphDiv);
         container.appendChild(wrapperDiv);
 
-        // 실제 그래프 렌더링
+        // Actual graph rendering
         this.renderGraph(graphDiv, networkRef);
     }
 }

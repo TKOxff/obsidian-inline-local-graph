@@ -1,38 +1,36 @@
-import { App, Plugin, debounce, MarkdownView } from 'obsidian';
+import { Plugin, debounce, MarkdownView } from 'obsidian';
 import { InlineGraphView } from './InlineGraphView';
 import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
-interface MyPluginSettings {
+export interface InlineGraphSettings {
 	mySetting: string;
-    showArrows: boolean;
-    nodeBgColor: string;
-    showGraphBorder: boolean;
-    showBacklinks: boolean; // Option to toggle backlinks
-    skipImageLinks: boolean; // New option to toggle image link skipping
-    zoomScale?: number;
+	showArrows: boolean;
+	nodeBgColor: string;
+	showGraphBorder: boolean;
+	showBacklinks: boolean; // Option to toggle backlinks
+	skipImageLinks: boolean; // New option to toggle image link skipping
+	zoomScale?: number;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: InlineGraphSettings = {
 	mySetting: 'default',
-    showArrows: true,
-    nodeBgColor: '#888888',
-    showGraphBorder: true,
-    showBacklinks: true, // Default: show backlinks
-    skipImageLinks: true, // Default: skip image links
-    zoomScale: 1.0,
+	showArrows: true,
+	nodeBgColor: '#888888',
+	showGraphBorder: true,
+	showBacklinks: true, // Default: show backlinks
+	skipImageLinks: true, // Default: skip image links
+	zoomScale: 1.0,
 }
 
 // InlineGraph == InlineLocalGraph
 export default class InlineGraphPlugin extends Plugin {
-	settings: MyPluginSettings;
+	settings: InlineGraphSettings;
 	private graphView: InlineGraphView;
 	private observer: MutationObserver;
-    isGraphVisible: boolean = true; // default: visible
+	isGraphVisible: boolean = true; // default: visible
 
 	async onload() {
-		console.log('Loading Inline Graph Plugin');
-
-		this.registerStyles();
+		console.debug('Loading Inline Graph Plugin');
 
 		await this.loadSettings();
 		this.graphView = new InlineGraphView(this.app, () => this.settings);
@@ -50,8 +48,8 @@ export default class InlineGraphPlugin extends Plugin {
 
 		this.observer = new MutationObserver(debouncedUpdate);
 		this.observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true });
-		
-		const ribbonIconEl = this.addRibbonIcon('waypoints', 'Toggle Inline local graph', () => {
+
+		const ribbonIconEl = this.addRibbonIcon('waypoints', 'Toggle inline local graph', () => {
 			this.toggleInlineGraphInEditor();
 		});
 		ribbonIconEl.addClass('inline-graph-ribbon-class');
@@ -67,26 +65,18 @@ export default class InlineGraphPlugin extends Plugin {
 		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
 	}
 
-	registerStyles() {
-		const styleEl = document.createElement('link');
-		styleEl.rel = 'stylesheet';
-		styleEl.type = 'text/css';
-		styleEl.href = this.app.vault.adapter.getResourcePath(
-			this.manifest.dir + '/styles.css'
-		);
-		document.head.appendChild(styleEl);
-	}
-
 	// Add .inline-graph-container div to show the inline graph
-	showInlineGraphInEditor() {
-		console.log("showInlineGraphInEditor Begin");
+	showInlineGraphInEditor(view?: MarkdownView | null) {
+		console.debug("showInlineGraphInEditor Begin");
 
-		const activeLeaf = this.app.workspace.activeLeaf;
-		if (!activeLeaf || !(activeLeaf.view instanceof MarkdownView)) {
-			console.log("showInlineGraphInEditor - Not a markdown view");
+		if (!view) {
+			view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		}
+
+		if (!view) {
+			console.debug("showInlineGraphInEditor - Not a markdown view");
 			return; // Not a markdown view
 		}
-		const view = activeLeaf.view;
 
 		let parentEl: Element | null = null;
 		const mode = view.getMode();
@@ -98,7 +88,7 @@ export default class InlineGraphPlugin extends Plugin {
 		}
 
 		if (!parentEl) {
-			console.log("showInlineGraphInEditor Not found parentEl");
+			console.debug("showInlineGraphInEditor Not found parentEl");
 			return;
 		}
 
@@ -143,16 +133,13 @@ export default class InlineGraphPlugin extends Plugin {
 	updateGraphs() {
 		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
 			if (leaf.view instanceof MarkdownView) {
-				const activeLeaf = this.app.workspace.activeLeaf;
-				this.app.workspace.activeLeaf = leaf;
-				this.showInlineGraphInEditor();
-				this.app.workspace.activeLeaf = activeLeaf;
+				this.showInlineGraphInEditor(leaf.view);
 			}
 		});
 	}
 
 	onunload() {
-		console.log('Unloading Inline Graph Plugin');
+		console.debug('Unloading Inline Graph Plugin');
 		this.observer.disconnect();
 		// Remove all graphs when the plugin is deactivated
 		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
