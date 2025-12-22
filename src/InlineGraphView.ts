@@ -44,7 +44,7 @@ export class InlineGraphView {
         leftDivider.className = 'inline-graph-divider';
         controlsDiv.appendChild(leftDivider);
 
-        // Refresh button (유니코드 리프레시 기호)
+        // Refresh button (Unicode refresh symbol)
         const refreshBtn = document.createElement('button');
         refreshBtn.className = 'inline-graph-refresh-btn';
         refreshBtn.title = 'Refresh inline graph';
@@ -80,7 +80,7 @@ export class InlineGraphView {
                 networkRef.current.moveTo({ scale: newScale });
                 networkRef.current.setOptions({
                     physics: {
-                        enabled: true, // physics 활성화(unstabilized)
+                        enabled: true, // physics enabled (unstabilized)
                         repulsion: {
                             nodeDistance: getNodeDistance(newScale),
                             springLength: getSpringLength(newScale)
@@ -103,7 +103,7 @@ export class InlineGraphView {
                 networkRef.current.moveTo({ scale: newScale });
                 networkRef.current.setOptions({
                     physics: {
-                        enabled: true, // physics 활성화(unstabilized)
+                        enabled: true, // physics enabled (unstabilized)
                         repulsion: {
                             nodeDistance: getNodeDistance(newScale),
                             springLength: getSpringLength(newScale)
@@ -188,7 +188,7 @@ export class InlineGraphView {
         const showArrows = this.getSettings().showArrows ?? true;
         const nodeBgColor = this.getSettings().nodeBgColor ?? '#888888';
 
-        // 줌스케일에 따라 노드 간 거리 계산
+        // Calculate node distance based on zoom scale
         const zoomScale = this.getSettings().zoomScale ?? 1.0;
         const getNodeDistance = (scale: number) => Math.max(1, 80 / scale);
         const getSpringLength = (scale: number) => Math.max(1, 80 / scale);
@@ -272,7 +272,7 @@ export class InlineGraphView {
         wrapperDiv.appendChild(graphDiv);
         container.appendChild(wrapperDiv);
 
-        // 실제 그래프 렌더링
+        // Actual graph rendering
         this.renderGraph(graphDiv, networkRef);
     }
 }
