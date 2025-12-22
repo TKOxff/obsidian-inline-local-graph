@@ -4,7 +4,7 @@ import { Network } from 'vis-network/standalone';
 export class InlineGraphView {
     private leaf: WorkspaceLeaf | null = null;
 
-    constructor(private app: any, private getSettings: () => any) {}
+    constructor(private app: any, private getSettings: () => any) { }
 
     private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
         const controlsDiv = document.createElement('div');
@@ -240,7 +240,7 @@ export class InlineGraphView {
     }
 
     renderTo(container: HTMLElement) {
-        // Remove all children safely (no innerHTML)
+        // Remove all children safely
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
