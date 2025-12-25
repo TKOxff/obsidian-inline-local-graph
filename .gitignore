@@ -24,3 +24,6 @@ data.json
 # Ignore .obsidian
 test-vault/.obsidian/*
 !test-vault/.obsidian/community-plugins.json
+
+# Ignore vscode workspace files
+*.code-workspace
