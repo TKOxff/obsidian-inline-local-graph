@@ -11,7 +11,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const {containerEl} = this;
+		const { containerEl } = this;
 
 		containerEl.empty();
 
@@ -20,7 +20,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 
 		if (!this.plugin.settings) {
 			console.error("Plugin settings are not loaded!");
-			containerEl.createEl('p', { text: 'Error: Plugin settings could not be loaded. Please try reloading the plugin.' });
+			containerEl.createEl('p', { text: 'Error: plugin settings could not be loaded. Please try reloading the plugin.' });
 			return;
 		}
 
