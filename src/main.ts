@@ -56,7 +56,7 @@ export default class InlineGraphPlugin extends Plugin {
 
 		// Only the local graph display command remains
 		this.addCommand({
-			id: 'toggle-inline-local-graph',
+			id: 'toggle-inline-graph',
 			name: 'Toggle the graph',
 			callback: () => this.toggleInlineGraphInEditor()
 		});
