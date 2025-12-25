@@ -234,7 +234,7 @@ export class InlineGraphView {
                 const nodeId = params.nodes[0];
                 const filePath = idToPath[nodeId];
                 if (filePath) {
-                    this.app.workspace.openLinkText(filePath, '', false);
+                    void this.app.workspace.openLinkText(filePath, '', false);
                 }
             }
         });
