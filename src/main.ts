@@ -93,7 +93,7 @@ export default class InlineGraphPlugin extends Plugin {
 		}
 
 		// Check if graph container already exists to avoid duplication
-		let graphContainer = parentEl.querySelector('.inline-graph-container') as HTMLElement | null;
+		let graphContainer = parentEl.querySelector<HTMLElement>('.inline-graph-container');
 		if (!graphContainer) {
 			graphContainer = document.createElement('div');
 			graphContainer.className = 'inline-graph-container';
@@ -109,7 +109,7 @@ export default class InlineGraphPlugin extends Plugin {
 			graphContainer.classList.remove('show-border');
 		}
 
-		this.graphView.renderTo(graphContainer as HTMLElement);
+		if (graphContainer) this.graphView.renderTo(graphContainer);
 	}
 
 	removeInlineGraphInEditor() {
