@@ -3,7 +3,6 @@ import { InlineGraphView } from './InlineGraphView';
 import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
 export interface InlineGraphSettings {
-	mySetting: string;
 	showArrows: boolean;
 	nodeBgColor: string;
 	showGraphBorder: boolean;
@@ -13,7 +12,6 @@ export interface InlineGraphSettings {
 }
 
 const DEFAULT_SETTINGS: InlineGraphSettings = {
-	mySetting: 'default',
 	showArrows: true,
 	nodeBgColor: '#888888',
 	showGraphBorder: true,
@@ -33,7 +31,7 @@ export default class InlineGraphPlugin extends Plugin {
 		console.debug('Loading Inline Graph Plugin');
 
 		await this.loadSettings();
-		this.graphView = new InlineGraphView(this.app, () => this.settings);
+		this.graphView = new InlineGraphView(this.app, () => this.settings, () => this.saveSettings());
 
 		// Use MutationObserver to reliably detect all UI changes.
 		const debouncedUpdate = debounce(() => {
@@ -58,7 +56,16 @@ export default class InlineGraphPlugin extends Plugin {
 		this.addCommand({
 			id: 'toggle-inline-graph',
 			name: 'Toggle the graph',
-			callback: () => this.toggleInlineGraphInEditor()
+			checkCallback: (checking: boolean) => {
+				const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (activeView) {
+					if (!checking) {
+						this.toggleInlineGraphInEditor();
+					}
+					return true;
+				}
+				return false;
+			}
 		});
 
 		// Add settings tab

@@ -5,7 +5,7 @@ import { Network } from 'vis-network/standalone';
 export class InlineGraphView {
     private leaf: WorkspaceLeaf | null = null;
 
-    constructor(private app: App, private getSettings: () => InlineGraphSettings) { }
+    constructor(private app: App, private getSettings: () => InlineGraphSettings, private saveSettings: () => Promise<void>) { }
 
     private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
         const controlsDiv = document.createElement('div');
@@ -89,9 +89,7 @@ export class InlineGraphView {
                 });
                 // networkRef.current.stabilize();
 
-                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
-                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
-                }
+                await this.saveSettings();
             }
         };
         zoomOutBtn.onclick = async () => {
@@ -112,9 +110,7 @@ export class InlineGraphView {
                 });
                 // networkRef.current.stabilize();
 
-                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
-                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
-                }
+                await this.saveSettings();
             }
         };
 
@@ -135,7 +131,7 @@ export class InlineGraphView {
 
         // Link info (outgoing)
         const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
-        const backlinks = this.app.metadataCache.getBacklinksForFile(activeFile);
+        const backlinks = (this.app.metadataCache as any).getBacklinksForFile(activeFile);
 
         // Node/edge data generation
         const nodeSet = new Set<string>();
@@ -232,9 +228,10 @@ export class InlineGraphView {
         network.on('click', (params) => {
             if (params.nodes && params.nodes.length > 0) {
                 const nodeId = params.nodes[0];
+                const activeFile = this.app.workspace.getActiveFile();
                 const filePath = idToPath[nodeId];
                 if (filePath) {
-                    void this.app.workspace.openLinkText(filePath, '', false);
+                    void this.app.workspace.openLinkText(filePath, activeFile?.path || '', false);
                 }
             }
         });

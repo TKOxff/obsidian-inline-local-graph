@@ -34,30 +34,28 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 					this.plugin.updateGraphs(); // Update immediately
 				}));
-                
-        new Setting(containerEl)
-            .setName('Show graph border')
-            .setDesc('Toggle the border around the graph container.')
-            .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.showGraphBorder)
-                .onChange(async (value) => {
-                    this.plugin.settings.showGraphBorder = value;
-                    await this.plugin.saveSettings();
-                    this.plugin.updateGraphs();
-                }));
+
+		new Setting(containerEl)
+			.setName('Show graph border')
+			.setDesc('Toggle the border around the graph container.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showGraphBorder)
+				.onChange(async (value) => {
+					this.plugin.settings.showGraphBorder = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateGraphs();
+				}));
 
 		new Setting(containerEl)
 			.setName('Node background color')
 			.setDesc('Set the background color of graph nodes.')
-			.addText(text => text
+			.addColorPicker(color => color
 				.setValue(this.plugin.settings.nodeBgColor)
-				.setPlaceholder('#888888')
 				.onChange(async (value) => {
 					this.plugin.settings.nodeBgColor = value;
 					await this.plugin.saveSettings();
 					this.plugin.updateGraphs();
-				})
-			.inputEl.setAttribute('type', 'color'));
+				}));
 
 		new Setting(containerEl)
 			.setName('Show backlinks')
@@ -67,7 +65,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.showBacklinks = value;
 					await this.plugin.saveSettings();
-                    this.plugin.updateGraphs();
+					this.plugin.updateGraphs();
 				}));
 
 		new Setting(containerEl)
