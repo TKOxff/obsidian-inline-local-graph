@@ -3,7 +3,6 @@ import { InlineGraphView } from './InlineGraphView';
 import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
 export interface InlineGraphSettings {
-	mySetting: string;
 	showArrows: boolean;
 	nodeBgColor: string;
 	showGraphBorder: boolean;
@@ -13,7 +12,6 @@ export interface InlineGraphSettings {
 }
 
 const DEFAULT_SETTINGS: InlineGraphSettings = {
-	mySetting: 'default',
 	showArrows: true,
 	nodeBgColor: '#888888',
 	showGraphBorder: true,
