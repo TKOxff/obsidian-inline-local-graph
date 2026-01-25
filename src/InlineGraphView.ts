@@ -5,7 +5,7 @@ import { Network } from 'vis-network/standalone';
 export class InlineGraphView {
     private leaf: WorkspaceLeaf | null = null;
 
-    constructor(private app: App, private getSettings: () => InlineGraphSettings) { }
+    constructor(private app: App, private getSettings: () => InlineGraphSettings, private saveSettings: () => Promise<void>) { }
 
     private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
         const controlsDiv = document.createElement('div');
@@ -89,9 +89,7 @@ export class InlineGraphView {
                 });
                 // networkRef.current.stabilize();
 
-                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
-                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
-                }
+                await this.saveSettings();
             }
         };
         zoomOutBtn.onclick = async () => {
@@ -112,9 +110,7 @@ export class InlineGraphView {
                 });
                 // networkRef.current.stabilize();
 
-                if (typeof this.app.plugins?.plugins?.["inline-local-graph"]?.saveSettings === "function") {
-                    await this.app.plugins.plugins["inline-local-graph"].saveSettings();
-                }
+                await this.saveSettings();
             }
         };
 

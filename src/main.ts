@@ -31,7 +31,7 @@ export default class InlineGraphPlugin extends Plugin {
 		console.debug('Loading Inline Graph Plugin');
 
 		await this.loadSettings();
-		this.graphView = new InlineGraphView(this.app, () => this.settings);
+		this.graphView = new InlineGraphView(this.app, () => this.settings, () => this.saveSettings());
 
 		// Use MutationObserver to reliably detect all UI changes.
 		const debouncedUpdate = debounce(() => {
