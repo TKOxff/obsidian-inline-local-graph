@@ -1,4 +1,4 @@
-import { App, WorkspaceLeaf } from 'obsidian';
+import { App, WorkspaceLeaf, TFile } from 'obsidian';
 import { InlineGraphSettings } from "./main";
 import { Network } from 'vis-network/standalone';
 
@@ -47,7 +47,7 @@ export class InlineGraphView {
         // Refresh button (Unicode refresh symbol)
         const refreshBtn = document.createElement('button');
         refreshBtn.className = 'inline-graph-refresh-btn';
-        refreshBtn.title = 'Refresh inline graph';
+        refreshBtn.title = 'Refresh';
         refreshBtn.textContent = '⟳';
         refreshBtn.onclick = () => {
             this.renderTo(container);
@@ -131,7 +131,9 @@ export class InlineGraphView {
 
         // Link info (outgoing)
         const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
-        const backlinks = (this.app.metadataCache as any).getBacklinksForFile(activeFile);
+        const backlinks = (this.app.metadataCache as unknown as {
+            getBacklinksForFile(file: TFile): { data: Map<string, unknown> }
+        }).getBacklinksForFile(activeFile);
 
         // Node/edge data generation
         const nodeSet = new Set<string>();
@@ -230,8 +232,8 @@ export class InlineGraphView {
                 const nodeId = params.nodes[0];
                 const activeFile = this.app.workspace.getActiveFile();
                 const filePath = idToPath[nodeId];
-                if (filePath) {
-                    void this.app.workspace.openLinkText(filePath, activeFile?.path || '', false);
+                if (filePath && activeFile) {
+                    void this.app.workspace.openLinkText(filePath, activeFile.path, false);
                 }
             }
         });
