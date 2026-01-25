@@ -56,7 +56,16 @@ export default class InlineGraphPlugin extends Plugin {
 		this.addCommand({
 			id: 'toggle-inline-graph',
 			name: 'Toggle the graph',
-			callback: () => this.toggleInlineGraphInEditor()
+			checkCallback: (checking: boolean) => {
+				const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (activeView) {
+					if (!checking) {
+						this.toggleInlineGraphInEditor();
+					}
+					return true;
+				}
+				return false;
+			}
 		});
 
 		// Add settings tab
