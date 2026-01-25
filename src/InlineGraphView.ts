@@ -135,7 +135,7 @@ export class InlineGraphView {
 
         // Link info (outgoing)
         const links = this.app.metadataCache.resolvedLinks[activeFile.path] || {};
-        const backlinks = this.app.metadataCache.getBacklinksForFile(activeFile);
+        const backlinks = (this.app.metadataCache as any).getBacklinksForFile(activeFile);
 
         // Node/edge data generation
         const nodeSet = new Set<string>();
@@ -232,9 +232,10 @@ export class InlineGraphView {
         network.on('click', (params) => {
             if (params.nodes && params.nodes.length > 0) {
                 const nodeId = params.nodes[0];
+                const activeFile = this.app.workspace.getActiveFile();
                 const filePath = idToPath[nodeId];
                 if (filePath) {
-                    void this.app.workspace.openLinkText(filePath, '', false);
+                    void this.app.workspace.openLinkText(filePath, activeFile?.path || '', false);
                 }
             }
         });
