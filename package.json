@@ -1,7 +1,7 @@
 {
 	"name": "inline-local-graph",
 	"version": "0.9.6",
-	"description": "A plugin that allows you to visualize the local graph inline within your notes.",
+	"description": "Visualize the local graph inline within your notes.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

@@ -3,7 +3,7 @@
 	"name": "Inline Local Graph",
 	"version": "0.9.6",
 	"minAppVersion": "0.16.0",
-	"description": "A plugin that allows you to visualize the local graph inline within your notes.",
+	"description": "Visualize the local graph inline within your notes.",
 	"author": "TKOxff <tkoxff@gmail.com>",
 	"authorUrl": "https://github.com/TKOxff",
 	"isDesktopOnly": false
