@@ -3,7 +3,6 @@ import InlineGraphPlugin from './main';
 
 export class InlineGraphSettingTab extends PluginSettingTab {
 	plugin: InlineGraphPlugin;
-	nodeBgColor: string;
 
 	constructor(app: App, plugin: InlineGraphPlugin) {
 		super(app, plugin);
@@ -15,14 +14,13 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		console.debug("Displaying settings tab. Plugin instance:", this.plugin);
-		console.debug("Plugin settings:", this.plugin.settings);
-
 		if (!this.plugin.settings) {
-			console.error("Plugin settings are not loaded!");
 			containerEl.createEl('p', { text: 'Error: plugin settings could not be loaded. Please try reloading the plugin.' });
 			return;
 		}
+
+		// ── Graph ──
+		containerEl.createEl('h6', { text: 'Graph' });
 
 		new Setting(containerEl)
 			.setName('Show arrows on edges')
@@ -32,7 +30,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.showArrows = value;
 					await this.plugin.saveSettings();
-					this.plugin.updateGraphs(); // Update immediately
+					this.plugin.updateGraphs();
 				}));
 
 		new Setting(containerEl)
@@ -42,17 +40,6 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.showGraphBorder)
 				.onChange(async (value) => {
 					this.plugin.settings.showGraphBorder = value;
-					await this.plugin.saveSettings();
-					this.plugin.updateGraphs();
-				}));
-
-		new Setting(containerEl)
-			.setName('Node background color')
-			.setDesc('Set the background color of graph nodes.')
-			.addColorPicker(color => color
-				.setValue(this.plugin.settings.nodeBgColor)
-				.onChange(async (value) => {
-					this.plugin.settings.nodeBgColor = value;
 					await this.plugin.saveSettings();
 					this.plugin.updateGraphs();
 				}));
@@ -76,7 +63,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.skipImageLinks = value;
 					await this.plugin.saveSettings();
-					this.plugin.updateGraphs(); // Update immediately
+					this.plugin.updateGraphs();
 				}));
 
 		new Setting(containerEl)
@@ -89,6 +76,79 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 					.setDynamicTooltip()
 					.onChange(async (value) => {
 						this.plugin.settings.zoomScale = value;
+						await this.plugin.saveSettings();
+						this.plugin.updateGraphs();
+					});
+			});
+
+		// ── Node Style ──
+		containerEl.createEl('h6', { text: 'Node Style' });
+
+		new Setting(containerEl)
+			.setName('Node shape')
+			.setDesc('Set the shape of graph nodes.')
+			.addDropdown(dropdown => dropdown
+				.addOptions({
+					ellipse: 'Ellipse',
+					box: 'Box',
+					circle: 'Circle',
+					dot: 'Dot',
+					text: 'Text only'
+				})
+				.setValue(this.plugin.settings.nodeShape)
+				.onChange(async (value) => {
+					this.plugin.settings.nodeShape = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateGraphs();
+				}));
+
+		new Setting(containerEl)
+			.setName('Node background color')
+			.setDesc('Set the background color of graph nodes.')
+			.addColorPicker(color => color
+				.setValue(this.plugin.settings.nodeBgColor)
+				.onChange(async (value) => {
+					this.plugin.settings.nodeBgColor = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateGraphs();
+				}));
+
+		new Setting(containerEl)
+			.setName('Node font size')
+			.setDesc('Set the font size of node labels (default: 14).')
+			.addSlider(slider => {
+				slider
+					.setLimits(8, 28, 1)
+					.setValue(this.plugin.settings.nodeFontSize)
+					.setDynamicTooltip()
+					.onChange(async (value) => {
+						this.plugin.settings.nodeFontSize = value;
+						await this.plugin.saveSettings();
+						this.plugin.updateGraphs();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName('Truncate labels')
+			.setDesc('Shorten long node labels with ellipsis (...).')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.truncateLabels)
+				.onChange(async (value) => {
+					this.plugin.settings.truncateLabels = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateGraphs();
+				}));
+
+		new Setting(containerEl)
+			.setName('Max label length')
+			.setDesc('Maximum characters before truncation (default: 20).')
+			.addSlider(slider => {
+				slider
+					.setLimits(5, 50, 1)
+					.setValue(this.plugin.settings.maxLabelLength)
+					.setDynamicTooltip()
+					.onChange(async (value) => {
+						this.plugin.settings.maxLabelLength = value;
 						await this.plugin.saveSettings();
 						this.plugin.updateGraphs();
 					});

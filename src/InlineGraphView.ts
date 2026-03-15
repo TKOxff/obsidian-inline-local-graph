@@ -1,11 +1,13 @@
-import { App, WorkspaceLeaf, TFile } from 'obsidian';
+import { App, TFile } from 'obsidian';
 import { InlineGraphSettings } from "./main";
 import { Network } from 'vis-network/standalone';
 
 export class InlineGraphView {
-    private leaf: WorkspaceLeaf | null = null;
-
     constructor(private app: App, private getSettings: () => InlineGraphSettings, private saveSettings: () => Promise<void>) { }
+
+    private static getNodeDistance(scale: number) { return Math.max(1, 80 / scale); }
+    private static getSpringLength(scale: number) { return Math.max(1, 80 / scale); }
+    private static truncateLabel(label: string, max: number) { return label.length > max ? label.slice(0, max) + '...' : label; }
 
     private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
         const controlsDiv = document.createElement('div');
@@ -68,9 +70,6 @@ export class InlineGraphView {
         zoomInBtn.textContent = '+';
         zoomInBtn.title = 'Zoom in';
 
-        const getNodeDistance = (scale: number) => Math.max(1, 80 / scale);
-        const getSpringLength = (scale: number) => Math.max(1, 80 / scale);
-
         zoomInBtn.onclick = async () => {
             if (networkRef.current) {
                 const scale = networkRef.current.getScale();
@@ -80,14 +79,13 @@ export class InlineGraphView {
                 networkRef.current.moveTo({ scale: newScale });
                 networkRef.current.setOptions({
                     physics: {
-                        enabled: true, // physics enabled (unstabilized)
+                        enabled: true,
                         repulsion: {
-                            nodeDistance: getNodeDistance(newScale),
-                            springLength: getSpringLength(newScale)
+                            nodeDistance: InlineGraphView.getNodeDistance(newScale),
+                            springLength: InlineGraphView.getSpringLength(newScale)
                         }
                     }
                 });
-                // networkRef.current.stabilize();
 
                 await this.saveSettings();
             }
@@ -101,14 +99,13 @@ export class InlineGraphView {
                 networkRef.current.moveTo({ scale: newScale });
                 networkRef.current.setOptions({
                     physics: {
-                        enabled: true, // physics enabled (unstabilized)
+                        enabled: true,
                         repulsion: {
-                            nodeDistance: getNodeDistance(newScale),
-                            springLength: getSpringLength(newScale)
+                            nodeDistance: InlineGraphView.getNodeDistance(newScale),
+                            springLength: InlineGraphView.getSpringLength(newScale)
                         }
                     }
                 });
-                // networkRef.current.stabilize();
 
                 await this.saveSettings();
             }
@@ -135,9 +132,20 @@ export class InlineGraphView {
             getBacklinksForFile(file: TFile): { data: Map<string, unknown> }
         }).getBacklinksForFile(activeFile);
 
+        // Get plugin settings
+        const settings = this.getSettings();
+        const truncate = settings.truncateLabels ?? true;
+        const maxLen = settings.maxLabelLength ?? 20;
+        const toLabel = (name: string) => truncate ? InlineGraphView.truncateLabel(name, maxLen) : name;
+        const nodeFontSize = settings.nodeFontSize ?? 14;
+        const nodeShape = settings.nodeShape ?? 'ellipse';
+        const showArrows = settings.showArrows ?? true;
+        const nodeBgColor = settings.nodeBgColor ?? '#888888';
+        const zoomScale = settings.zoomScale ?? 1.0;
+
         // Node/edge data generation
         const nodeSet = new Set<string>();
-        const nodes = [{ id: activeId, label: activeId, font: { color: '#fff' } }];
+        const nodes = [{ id: activeId, label: toLabel(activeId), font: { color: '#fff' } }];
         nodeSet.add(activeId);
         const edges = [];
         const idToPath: Record<string, string> = {};
@@ -145,12 +153,12 @@ export class InlineGraphView {
 
         // Outgoing links (conditionally skip image files)
         for (const target in links) {
-            if (this.getSettings().skipImageLinks && /\.(png|jpg|jpeg|gif|svg)$/i.test(target)) {
+            if (settings.skipImageLinks && /\.(png|jpg|jpeg|gif|svg)$/i.test(target)) {
                 continue;
             }
             const targetName = target.split('/').pop()?.replace('.md', '') || target;
             if (!nodeSet.has(targetName)) {
-                nodes.push({ id: targetName, label: targetName, font: { color: '#fff' } });
+                nodes.push({ id: targetName, label: toLabel(targetName), font: { color: '#fff' } });
                 nodeSet.add(targetName);
             }
             edges.push({
@@ -162,13 +170,13 @@ export class InlineGraphView {
         }
 
         // Incoming backlinks (conditionally render based on settings)
-        if (this.getSettings().showBacklinks) {
+        if (settings.showBacklinks) {
             for (const source of backlinks.data.keys()) {
                 const sourceName = source.split('/').pop()?.replace('.md', '') || source;
                 if (!nodeSet.has(sourceName)) {
                     nodes.push({
                         id: sourceName,
-                        label: sourceName,
+                        label: toLabel(sourceName),
                         font: { color: 'rgba(255, 255, 255, 0.6)' }
                     });
                     nodeSet.add(sourceName);
@@ -182,18 +190,9 @@ export class InlineGraphView {
             }
         }
 
-        // Get plugin settings
-        const showArrows = this.getSettings().showArrows ?? true;
-        const nodeBgColor = this.getSettings().nodeBgColor ?? '#888888';
-
-        // Calculate node distance based on zoom scale
-        const zoomScale = this.getSettings().zoomScale ?? 1.0;
-        const getNodeDistance = (scale: number) => Math.max(1, 80 / scale);
-        const getSpringLength = (scale: number) => Math.max(1, 80 / scale);
-
         const data = { nodes, edges };
         const options = {
-            nodes: { shape: 'ellipse', color: nodeBgColor, font: { color: '#fff' } },
+            nodes: { shape: nodeShape, size: 5, color: nodeBgColor, font: { color: '#fff', size: nodeFontSize } },
             edges: {
                 color: '#aaa',
                 arrows: {
@@ -209,8 +208,8 @@ export class InlineGraphView {
                 stabilization: { enabled: true, iterations: 200 },
                 solver: 'repulsion',
                 repulsion: {
-                    nodeDistance: getNodeDistance(zoomScale),
-                    springLength: getSpringLength(zoomScale),
+                    nodeDistance: InlineGraphView.getNodeDistance(zoomScale),
+                    springLength: InlineGraphView.getSpringLength(zoomScale),
                     springConstant: 0.05,
                     damping: 0.3
                 },

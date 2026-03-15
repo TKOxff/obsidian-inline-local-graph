@@ -6,18 +6,26 @@ export interface InlineGraphSettings {
 	showArrows: boolean;
 	nodeBgColor: string;
 	showGraphBorder: boolean;
-	showBacklinks: boolean; // Option to toggle backlinks
-	skipImageLinks: boolean; // New option to toggle image link skipping
+	showBacklinks: boolean;
+	skipImageLinks: boolean;
 	zoomScale?: number;
+	truncateLabels: boolean;
+	maxLabelLength: number;
+	nodeFontSize: number;
+	nodeShape: string;
 }
 
 const DEFAULT_SETTINGS: InlineGraphSettings = {
 	showArrows: true,
 	nodeBgColor: '#888888',
 	showGraphBorder: true,
-	showBacklinks: true, // Default: show backlinks
-	skipImageLinks: true, // Default: skip image links
+	showBacklinks: true,
+	skipImageLinks: true,
 	zoomScale: 1.0,
+	truncateLabels: true,
+	maxLabelLength: 20,
+	nodeFontSize: 14,
+	nodeShape: 'ellipse',
 }
 
 // InlineGraph == InlineLocalGraph
@@ -28,7 +36,6 @@ export default class InlineGraphPlugin extends Plugin {
 	isGraphVisible: boolean = true; // default: visible
 
 	async onload() {
-		console.debug('Loading Inline Graph Plugin');
 
 		await this.loadSettings();
 		this.graphView = new InlineGraphView(this.app, () => this.settings, () => this.saveSettings());
@@ -72,17 +79,13 @@ export default class InlineGraphPlugin extends Plugin {
 		this.addSettingTab(new InlineGraphSettingTab(this.app, this));
 	}
 
-	// Add .inline-graph-container div to show the inline graph
 	showInlineGraphInEditor(view?: MarkdownView | null) {
-		console.debug("showInlineGraphInEditor Begin");
-
 		if (!view) {
 			view = this.app.workspace.getActiveViewOfType(MarkdownView);
 		}
 
 		if (!view) {
-			console.debug("showInlineGraphInEditor - Not a markdown view");
-			return; // Not a markdown view
+			return;
 		}
 
 		let parentEl: Element | null = null;
@@ -95,7 +98,6 @@ export default class InlineGraphPlugin extends Plugin {
 		}
 
 		if (!parentEl) {
-			console.debug("showInlineGraphInEditor Not found parentEl");
 			return;
 		}
 
@@ -146,7 +148,6 @@ export default class InlineGraphPlugin extends Plugin {
 	}
 
 	onunload() {
-		console.debug('Unloading Inline Graph Plugin');
 		this.observer.disconnect();
 		// Remove all graphs when the plugin is deactivated
 		this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
