@@ -1,5 +1,7 @@
 # vscode
 .vscode 
+.claude
+.ai-agent
 
 # Intellij
 *.iml
