@@ -13,55 +13,69 @@ export class InlineGraphView {
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'inline-graph-controls';
 
-        const switchLabel = document.createElement('label');
-        switchLabel.className = 'inline-graph-switch-label';
+        // Links toggle
+        const linksLabel = document.createElement('label');
+        linksLabel.className = 'inline-graph-switch-label';
 
-        const labelText = document.createElement('span');
-        labelText.textContent = 'Backlinks';
+        const linksText = document.createElement('span');
+        linksText.textContent = 'Outgoing';
 
-        const switchSlider = document.createElement('span');
-        switchSlider.className = 'inline-graph-switch-slider';
+        const linksSlider = document.createElement('span');
+        linksSlider.className = 'inline-graph-switch-slider';
 
-        const updateSwitchUI = () => {
-            if (this.getSettings().showBacklinks) {
-                switchSlider.classList.add('active');
+        const updateLinksUI = () => {
+            if (this.getSettings().showLinks) {
+                linksSlider.classList.add('active');
             } else {
-                switchSlider.classList.remove('active');
+                linksSlider.classList.remove('active');
             }
         };
-        updateSwitchUI();
+        updateLinksUI();
 
-        switchSlider.onclick = () => {
+        linksSlider.onclick = () => {
+            const settings = this.getSettings();
+            settings.showLinks = !settings.showLinks;
+            updateLinksUI();
+            this.renderTo(container);
+        };
+
+        linksLabel.appendChild(linksText);
+        linksLabel.appendChild(linksSlider);
+        controlsDiv.appendChild(linksLabel);
+
+        // Backlinks toggle
+        const backlinksLabel = document.createElement('label');
+        backlinksLabel.className = 'inline-graph-switch-label';
+
+        const backlinksText = document.createElement('span');
+        backlinksText.textContent = 'Incoming';
+
+        const backlinksSlider = document.createElement('span');
+        backlinksSlider.className = 'inline-graph-switch-slider';
+
+        const updateBacklinksUI = () => {
+            if (this.getSettings().showBacklinks) {
+                backlinksSlider.classList.add('active');
+            } else {
+                backlinksSlider.classList.remove('active');
+            }
+        };
+        updateBacklinksUI();
+
+        backlinksSlider.onclick = () => {
             const settings = this.getSettings();
             settings.showBacklinks = !settings.showBacklinks;
-            updateSwitchUI();
+            updateBacklinksUI();
             this.renderTo(container);
         };
 
-        switchLabel.appendChild(labelText);
-        switchLabel.appendChild(switchSlider);
-        controlsDiv.appendChild(switchLabel);
-
-        const leftDivider = document.createElement('span');
-        leftDivider.className = 'inline-graph-divider';
-        controlsDiv.appendChild(leftDivider);
-
-        // Refresh button (Unicode refresh symbol)
-        const refreshBtn = document.createElement('button');
-        refreshBtn.className = 'inline-graph-refresh-btn';
-        refreshBtn.title = 'Refresh';
-        refreshBtn.textContent = '⟳';
-        refreshBtn.onclick = () => {
-            this.renderTo(container);
-        };
-        controlsDiv.appendChild(refreshBtn);
-
-        const rightDivider = document.createElement('span');
-        rightDivider.className = 'inline-graph-divider';
-        controlsDiv.appendChild(rightDivider);
+        backlinksLabel.appendChild(backlinksText);
+        backlinksLabel.appendChild(backlinksSlider);
+        controlsDiv.appendChild(backlinksLabel);
 
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.className = 'inline-graph-zoom-btn';
+        zoomOutBtn.style.marginLeft = '8px';
         zoomOutBtn.textContent = '-';
         zoomOutBtn.title = 'Zoom out';
 
@@ -151,8 +165,8 @@ export class InlineGraphView {
         const idToPath: Record<string, string> = {};
         idToPath[activeId] = activeFile.path;
 
-        // Outgoing links (conditionally skip image files)
-        for (const target in links) {
+        // Outgoing links (conditionally render based on settings)
+        if (settings.showLinks) for (const target in links) {
             if (settings.skipImageLinks && /\.(png|jpg|jpeg|gif|svg)$/i.test(target)) {
                 continue;
             }

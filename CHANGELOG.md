@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.8
+
+### New Features
+- **Outgoing toggle**: Added toggle to the control bar to show/hide outgoing links
+- **Show outgoing links**: Added corresponding setting to the settings panel
+
+### Improvements
+- Control bar labels renamed to **Outgoing** / **Incoming** for consistency with Obsidian's standard local graph terminology
+- Refresh button (⟳) removed from control bar — frees up space, especially on mobile portrait mode
+- `showGraphBorder` default changed from `true` to `false`
+- Settings panel entries renamed to **Show outgoing links** / **Show incoming links**
+
 ## 0.9.7
 
 ### New Features
