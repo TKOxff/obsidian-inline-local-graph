@@ -18,7 +18,7 @@ export class InlineGraphView {
         linksLabel.className = 'inline-graph-switch-label';
 
         const linksText = document.createElement('span');
-        linksText.textContent = 'Links';
+        linksText.textContent = 'Outgoing';
 
         const linksSlider = document.createElement('span');
         linksSlider.className = 'inline-graph-switch-slider';
@@ -48,7 +48,7 @@ export class InlineGraphView {
         backlinksLabel.className = 'inline-graph-switch-label';
 
         const backlinksText = document.createElement('span');
-        backlinksText.textContent = 'Backlinks';
+        backlinksText.textContent = 'Incoming';
 
         const backlinksSlider = document.createElement('span');
         backlinksSlider.className = 'inline-graph-switch-slider';
@@ -75,6 +75,7 @@ export class InlineGraphView {
 
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.className = 'inline-graph-zoom-btn';
+        zoomOutBtn.style.marginLeft = '8px';
         zoomOutBtn.textContent = '-';
         zoomOutBtn.title = 'Zoom out';
 

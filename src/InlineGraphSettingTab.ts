@@ -45,7 +45,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Show links (Outgoing links)')
+			.setName('Show outgoing links')
 			.setDesc('Toggle whether to display outgoing links in the graph.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showLinks)
@@ -56,7 +56,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Show backlinks (Incoming links)')
+			.setName('Show incoming links')
 			.setDesc('Toggle whether to display backlinks in the graph.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showBacklinks)
