@@ -6,6 +6,7 @@ export interface InlineGraphSettings {
 	showArrows: boolean;
 	nodeBgColor: string;
 	showGraphBorder: boolean;
+	showLinks: boolean;
 	showBacklinks: boolean;
 	skipImageLinks: boolean;
 	zoomScale?: number;
@@ -18,7 +19,8 @@ export interface InlineGraphSettings {
 const DEFAULT_SETTINGS: InlineGraphSettings = {
 	showArrows: true,
 	nodeBgColor: '#888888',
-	showGraphBorder: true,
+	showGraphBorder: false,
+	showLinks: true,
 	showBacklinks: true,
 	skipImageLinks: true,
 	zoomScale: 1.0,
