@@ -93,6 +93,34 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 					});
 			});
 
+		new Setting(containerEl)
+			.setName(t('maxNodesName'))
+			.setDesc(t('maxNodesDesc'))
+			.addText(text => {
+				const MIN_NODES = 1;
+				const MAX_NODES = 200;
+				text.inputEl.type = 'number';
+				text.inputEl.min = String(MIN_NODES);
+				text.inputEl.max = String(MAX_NODES);
+				text.inputEl.style.width = '5em';
+				text.inputEl.style.textAlign = 'right';
+				text
+					.setValue(String(this.plugin.settings.maxNodes))
+					.onChange(async (value) => {
+						const parsed = parseInt(value, 10);
+						if (Number.isNaN(parsed)) return; // ignore empty / mid-typing
+						// Clamp out-of-range values to the valid range.
+						const clamped = Math.min(MAX_NODES, Math.max(MIN_NODES, parsed));
+						this.plugin.settings.maxNodes = clamped;
+						await this.plugin.saveSettings();
+						this.plugin.updateGraphs();
+					});
+				// Reflect the clamped value in the field once the user finishes editing.
+				text.inputEl.addEventListener('blur', () => {
+					text.setValue(String(this.plugin.settings.maxNodes));
+				});
+			});
+
 		// ── Node Style ──
 		containerEl.createEl('h6', { text: t('headingNodeStyle') });
 

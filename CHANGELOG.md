@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.10
+
+### New Features
+- **Max displayed nodes**: Added a setting to cap how many nodes appear in the graph. The active note is always shown and is excluded from the count; outgoing links are prioritized over backlinks. Entered as a number field (range 1–200, default 30) with out-of-range values clamped automatically.
+
 ## 0.9.9
 
 ### New Features

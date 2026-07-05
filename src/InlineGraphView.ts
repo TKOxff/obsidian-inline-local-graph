@@ -162,6 +162,7 @@ export class InlineGraphView {
         const maxLen = settings.maxLabelLength ?? 20;
         const maxLenCJK = settings.maxLabelLengthCJK ?? 10;
         const toLabel = (name: string) => truncate ? InlineGraphView.truncateLabel(name, maxLen, maxLenCJK) : name;
+        const maxNodes = settings.maxNodes ?? 30;
         const nodeFontSize = settings.nodeFontSize ?? 14;
         const nodeShape = settings.nodeShape ?? 'ellipse';
         const showArrows = settings.showArrows ?? true;
@@ -183,6 +184,7 @@ export class InlineGraphView {
             }
             const targetName = target.split('/').pop()?.replace('.md', '') || target;
             if (!nodeSet.has(targetName)) {
+                if (nodeSet.size - 1 >= maxNodes) continue; // cap counts neighbors only (active node excluded)
                 nodes.push({ id: targetName, label: toLabel(targetName), font: { color: '#fff' } });
                 nodeSet.add(targetName);
             }
@@ -199,6 +201,7 @@ export class InlineGraphView {
             for (const source of backlinks.data.keys()) {
                 const sourceName = source.split('/').pop()?.replace('.md', '') || source;
                 if (!nodeSet.has(sourceName)) {
+                    if (nodeSet.size - 1 >= maxNodes) continue; // cap counts neighbors only (active node excluded)
                     nodes.push({
                         id: sourceName,
                         label: toLabel(sourceName),
@@ -215,7 +218,10 @@ export class InlineGraphView {
             }
         }
 
-        const data = { nodes, edges };
+        // Safety net: drop any edge whose endpoints are not both rendered (guards against dangling edges when capped).
+        const renderedEdges = edges.filter(e => nodeSet.has(e.from) && nodeSet.has(e.to));
+
+        const data = { nodes, edges: renderedEdges };
         const options = {
             nodes: { shape: nodeShape, size: 5, color: nodeBgColor, font: { color: '#fff', size: nodeFontSize } },
             edges: {

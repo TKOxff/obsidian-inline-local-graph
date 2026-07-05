@@ -1,6 +1,6 @@
 {
 	"name": "inline-local-graph",
-	"version": "0.9.9",
+	"version": "0.9.10",
 	"description": "Visualize the local graph inline within your notes.",
 	"main": "main.js",
 	"scripts": {
