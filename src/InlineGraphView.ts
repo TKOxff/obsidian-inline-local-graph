@@ -1,6 +1,7 @@
 import { App, TFile } from 'obsidian';
 import { InlineGraphSettings } from "./main";
 import { Network } from 'vis-network/standalone';
+import { t } from './i18n';
 
 export class InlineGraphView {
     constructor(private app: App, private getSettings: () => InlineGraphSettings, private saveSettings: () => Promise<void>) { }
@@ -27,7 +28,7 @@ export class InlineGraphView {
         linksLabel.className = 'inline-graph-switch-label';
 
         const linksText = document.createElement('span');
-        linksText.textContent = 'Outgoing';
+        linksText.textContent = t('toggleOutgoing');
 
         const linksSlider = document.createElement('span');
         linksSlider.className = 'inline-graph-switch-slider';
@@ -57,7 +58,7 @@ export class InlineGraphView {
         backlinksLabel.className = 'inline-graph-switch-label';
 
         const backlinksText = document.createElement('span');
-        backlinksText.textContent = 'Incoming';
+        backlinksText.textContent = t('toggleIncoming');
 
         const backlinksSlider = document.createElement('span');
         backlinksSlider.className = 'inline-graph-switch-slider';
@@ -144,7 +145,7 @@ export class InlineGraphView {
         // Current note info
         const activeFile = this.app.workspace.getActiveFile();
         if (!activeFile) {
-            graphDiv.textContent = 'No note found.';
+            graphDiv.textContent = t('noNoteFound');
             return;
         }
         const activeId = activeFile.basename;

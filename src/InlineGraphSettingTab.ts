@@ -1,5 +1,6 @@
 import { PluginSettingTab, App, Setting } from 'obsidian';
 import InlineGraphPlugin from './main';
+import { t } from './i18n';
 
 export class InlineGraphSettingTab extends PluginSettingTab {
 	plugin: InlineGraphPlugin;
@@ -15,16 +16,16 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		if (!this.plugin.settings) {
-			containerEl.createEl('p', { text: 'Error: plugin settings could not be loaded. Please try reloading the plugin.' });
+			containerEl.createEl('p', { text: t('settingsLoadError') });
 			return;
 		}
 
 		// ── Graph ──
-		containerEl.createEl('h6', { text: 'Graph' });
+		containerEl.createEl('h6', { text: t('headingGraph') });
 
 		new Setting(containerEl)
-			.setName('Show arrows on edges')
-			.setDesc('Toggle arrow display on graph edges.')
+			.setName(t('showArrowsName'))
+			.setDesc(t('showArrowsDesc'))
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showArrows)
 				.onChange(async (value) => {
@@ -34,8 +35,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Show graph border')
-			.setDesc('Toggle the border around the graph container.')
+			.setName(t('showBorderName'))
+			.setDesc(t('showBorderDesc'))
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showGraphBorder)
 				.onChange(async (value) => {
@@ -45,8 +46,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Show outgoing links')
-			.setDesc('Toggle whether to display outgoing links in the graph.')
+			.setName(t('showOutgoingName'))
+			.setDesc(t('showOutgoingDesc'))
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showLinks)
 				.onChange(async (value) => {
@@ -56,8 +57,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Show incoming links')
-			.setDesc('Toggle whether to display backlinks in the graph.')
+			.setName(t('showIncomingName'))
+			.setDesc(t('showIncomingDesc'))
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showBacklinks)
 				.onChange(async (value) => {
@@ -67,8 +68,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Skip image links')
-			.setDesc('Toggle whether to exclude image files from the graph.')
+			.setName(t('skipImagesName'))
+			.setDesc(t('skipImagesDesc'))
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.skipImageLinks)
 				.onChange(async (value) => {
@@ -78,8 +79,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Initial zoom')
-			.setDesc('Set the initial zoom scale for the inline graph (default: 1.0).')
+			.setName(t('initialZoomName'))
+			.setDesc(t('initialZoomDesc'))
 			.addSlider(slider => {
 				slider
 					.setLimits(0.5, 5.0, 0.01)
@@ -93,18 +94,18 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 			});
 
 		// ── Node Style ──
-		containerEl.createEl('h6', { text: 'Node Style' });
+		containerEl.createEl('h6', { text: t('headingNodeStyle') });
 
 		new Setting(containerEl)
-			.setName('Node shape')
-			.setDesc('Set the shape of graph nodes.')
+			.setName(t('nodeShapeName'))
+			.setDesc(t('nodeShapeDesc'))
 			.addDropdown(dropdown => dropdown
 				.addOptions({
-					ellipse: 'Ellipse',
-					box: 'Box',
-					circle: 'Circle',
-					dot: 'Dot',
-					text: 'Text only'
+					ellipse: t('shapeEllipse'),
+					box: t('shapeBox'),
+					circle: t('shapeCircle'),
+					dot: t('shapeDot'),
+					text: t('shapeTextOnly')
 				})
 				.setValue(this.plugin.settings.nodeShape)
 				.onChange(async (value) => {
@@ -114,8 +115,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Node background color')
-			.setDesc('Set the background color of graph nodes.')
+			.setName(t('nodeBgColorName'))
+			.setDesc(t('nodeBgColorDesc'))
 			.addColorPicker(color => color
 				.setValue(this.plugin.settings.nodeBgColor)
 				.onChange(async (value) => {
@@ -125,8 +126,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Node font size')
-			.setDesc('Set the font size of node labels (default: 14).')
+			.setName(t('nodeFontSizeName'))
+			.setDesc(t('nodeFontSizeDesc'))
 			.addSlider(slider => {
 				slider
 					.setLimits(8, 28, 1)
@@ -140,8 +141,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName('Truncate labels')
-			.setDesc('Shorten long node labels with ellipsis (...).')
+			.setName(t('truncateName'))
+			.setDesc(t('truncateDesc'))
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.truncateLabels)
 				.onChange(async (value) => {
@@ -151,8 +152,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Max label length')
-			.setDesc('Maximum characters before truncation for English labels (default: 20).')
+			.setName(t('maxLenName'))
+			.setDesc(t('maxLenDesc'))
 			.addSlider(slider => {
 				slider
 					.setLimits(5, 50, 1)
@@ -166,8 +167,8 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName('Max label length (CJK)')
-			.setDesc('Maximum characters before truncation for CJK / full-width labels (default: 10).')
+			.setName(t('maxLenCjkName'))
+			.setDesc(t('maxLenCjkDesc'))
 			.addSlider(slider => {
 				slider
 					.setLimits(3, 30, 1)
