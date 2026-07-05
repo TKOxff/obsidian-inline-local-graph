@@ -1,13 +1,23 @@
 import { App, TFile } from 'obsidian';
 import { InlineGraphSettings } from "./main";
 import { Network } from 'vis-network/standalone';
+import { t } from './i18n';
 
 export class InlineGraphView {
     constructor(private app: App, private getSettings: () => InlineGraphSettings, private saveSettings: () => Promise<void>) { }
 
     private static getNodeDistance(scale: number) { return Math.max(1, 80 / scale); }
     private static getSpringLength(scale: number) { return Math.max(1, 80 / scale); }
-    private static truncateLabel(label: string, max: number) { return label.length > max ? label.slice(0, max) + '...' : label; }
+    // Detects CJK / full-width characters so English and non-English labels can use different length limits.
+    private static hasWideChar(label: string) {
+        return /[ᄀ-ᇿ　-〿぀-ヿ一-鿿가-힣＀-￯]/.test(label);
+    }
+
+    // Simple truncation: pick the max by language (CJK-containing labels use maxCjk), then cut and append '...'.
+    private static truncateLabel(label: string, maxEn: number, maxCjk: number) {
+        const max = InlineGraphView.hasWideChar(label) ? maxCjk : maxEn;
+        return label.length > max ? label.slice(0, max) + '...' : label;
+    }
 
     private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
         const controlsDiv = document.createElement('div');
@@ -18,7 +28,7 @@ export class InlineGraphView {
         linksLabel.className = 'inline-graph-switch-label';
 
         const linksText = document.createElement('span');
-        linksText.textContent = 'Outgoing';
+        linksText.textContent = t('toggleOutgoing');
 
         const linksSlider = document.createElement('span');
         linksSlider.className = 'inline-graph-switch-slider';
@@ -48,7 +58,7 @@ export class InlineGraphView {
         backlinksLabel.className = 'inline-graph-switch-label';
 
         const backlinksText = document.createElement('span');
-        backlinksText.textContent = 'Incoming';
+        backlinksText.textContent = t('toggleIncoming');
 
         const backlinksSlider = document.createElement('span');
         backlinksSlider.className = 'inline-graph-switch-slider';
@@ -135,7 +145,7 @@ export class InlineGraphView {
         // Current note info
         const activeFile = this.app.workspace.getActiveFile();
         if (!activeFile) {
-            graphDiv.textContent = 'No note found.';
+            graphDiv.textContent = t('noNoteFound');
             return;
         }
         const activeId = activeFile.basename;
@@ -150,7 +160,8 @@ export class InlineGraphView {
         const settings = this.getSettings();
         const truncate = settings.truncateLabels ?? true;
         const maxLen = settings.maxLabelLength ?? 20;
-        const toLabel = (name: string) => truncate ? InlineGraphView.truncateLabel(name, maxLen) : name;
+        const maxLenCJK = settings.maxLabelLengthCJK ?? 10;
+        const toLabel = (name: string) => truncate ? InlineGraphView.truncateLabel(name, maxLen, maxLenCJK) : name;
         const nodeFontSize = settings.nodeFontSize ?? 14;
         const nodeShape = settings.nodeShape ?? 'ellipse';
         const showArrows = settings.showArrows ?? true;
