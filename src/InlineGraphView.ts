@@ -7,7 +7,16 @@ export class InlineGraphView {
 
     private static getNodeDistance(scale: number) { return Math.max(1, 80 / scale); }
     private static getSpringLength(scale: number) { return Math.max(1, 80 / scale); }
-    private static truncateLabel(label: string, max: number) { return label.length > max ? label.slice(0, max) + '...' : label; }
+    // Detects CJK / full-width characters so English and non-English labels can use different length limits.
+    private static hasWideChar(label: string) {
+        return /[ᄀ-ᇿ　-〿぀-ヿ一-鿿가-힣＀-￯]/.test(label);
+    }
+
+    // Simple truncation: pick the max by language (CJK-containing labels use maxCjk), then cut and append '...'.
+    private static truncateLabel(label: string, maxEn: number, maxCjk: number) {
+        const max = InlineGraphView.hasWideChar(label) ? maxCjk : maxEn;
+        return label.length > max ? label.slice(0, max) + '...' : label;
+    }
 
     private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
         const controlsDiv = document.createElement('div');
@@ -150,7 +159,8 @@ export class InlineGraphView {
         const settings = this.getSettings();
         const truncate = settings.truncateLabels ?? true;
         const maxLen = settings.maxLabelLength ?? 20;
-        const toLabel = (name: string) => truncate ? InlineGraphView.truncateLabel(name, maxLen) : name;
+        const maxLenCJK = settings.maxLabelLengthCJK ?? 10;
+        const toLabel = (name: string) => truncate ? InlineGraphView.truncateLabel(name, maxLen, maxLenCJK) : name;
         const nodeFontSize = settings.nodeFontSize ?? 14;
         const nodeShape = settings.nodeShape ?? 'ellipse';
         const showArrows = settings.showArrows ?? true;

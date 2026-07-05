@@ -152,7 +152,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Max label length')
-			.setDesc('Maximum characters before truncation (default: 20).')
+			.setDesc('Maximum characters before truncation for English labels (default: 20).')
 			.addSlider(slider => {
 				slider
 					.setLimits(5, 50, 1)
@@ -160,6 +160,21 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 					.setDynamicTooltip()
 					.onChange(async (value) => {
 						this.plugin.settings.maxLabelLength = value;
+						await this.plugin.saveSettings();
+						this.plugin.updateGraphs();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName('Max label length (CJK)')
+			.setDesc('Maximum characters before truncation for CJK / full-width labels (default: 10).')
+			.addSlider(slider => {
+				slider
+					.setLimits(3, 30, 1)
+					.setValue(this.plugin.settings.maxLabelLengthCJK)
+					.setDynamicTooltip()
+					.onChange(async (value) => {
+						this.plugin.settings.maxLabelLengthCJK = value;
 						await this.plugin.saveSettings();
 						this.plugin.updateGraphs();
 					});

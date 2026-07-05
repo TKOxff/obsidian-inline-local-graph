@@ -12,6 +12,7 @@ export interface InlineGraphSettings {
 	zoomScale?: number;
 	truncateLabels: boolean;
 	maxLabelLength: number;
+	maxLabelLengthCJK: number;
 	nodeFontSize: number;
 	nodeShape: string;
 }
@@ -26,6 +27,7 @@ const DEFAULT_SETTINGS: InlineGraphSettings = {
 	zoomScale: 1.0,
 	truncateLabels: true,
 	maxLabelLength: 20,
+	maxLabelLengthCJK: 10,
 	nodeFontSize: 14,
 	nodeShape: 'ellipse',
 }
