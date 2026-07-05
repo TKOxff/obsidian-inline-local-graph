@@ -13,6 +13,7 @@ export interface InlineGraphSettings {
 	truncateLabels: boolean;
 	maxLabelLength: number;
 	maxLabelLengthCJK: number;
+	maxNodes: number;
 	nodeFontSize: number;
 	nodeShape: string;
 }
@@ -28,6 +29,7 @@ const DEFAULT_SETTINGS: InlineGraphSettings = {
 	truncateLabels: true,
 	maxLabelLength: 20,
 	maxLabelLengthCJK: 10,
+	maxNodes: 30,
 	nodeFontSize: 14,
 	nodeShape: 'ellipse',
 }

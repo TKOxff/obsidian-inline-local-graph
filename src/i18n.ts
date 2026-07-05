@@ -23,6 +23,7 @@ export type TranslationKey =
 	| 'truncateName' | 'truncateDesc'
 	| 'maxLenName' | 'maxLenDesc'
 	| 'maxLenCjkName' | 'maxLenCjkDesc'
+	| 'maxNodesName' | 'maxNodesDesc'
 	| 'toggleOutgoing' | 'toggleIncoming'
 	| 'noNoteFound';
 
@@ -60,6 +61,8 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
 		maxLenDesc: 'Maximum characters before truncation for alphabet-based languages (default: 20).',
 		maxLenCjkName: 'Max label length (Korean/Japanese/Chinese)',
 		maxLenCjkDesc: 'Maximum characters before truncation for non-alphabet languages such as Korean, Japanese and Chinese (default: 10).',
+		maxNodesName: 'Max displayed nodes',
+		maxNodesDesc: 'Maximum number of nodes shown in the graph, excluding the active note (which is always shown). Outgoing links are prioritized over backlinks. Range: 1–200 (default: 30).',
 		toggleOutgoing: 'Outgoing',
 		toggleIncoming: 'Incoming',
 		noNoteFound: 'No note found.',
@@ -97,6 +100,8 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
 		maxLenDesc: '알파벳 언어의 라벨을 줄이기 전 최대 글자 수 (기본값: 20).',
 		maxLenCjkName: '최대 라벨 길이 (한글/일본어/중국어)',
 		maxLenCjkDesc: '비알파벳 언어(한글/일본어/중국어)의 라벨을 줄이기 전 최대 글자 수 (기본값: 10).',
+		maxNodesName: '최대 표시 노드 수',
+		maxNodesDesc: '그래프에 표시할 노드의 최대 개수(항상 표시되는 현재 노트는 제외). 백링크보다 나가는 링크가 우선 표시됩니다. 범위: 1~200 (기본값: 30).',
 		toggleOutgoing: '나가는 링크',
 		toggleIncoming: '들어오는 링크',
 		noNoteFound: '노트를 찾을 수 없습니다.',
@@ -134,6 +139,8 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
 		maxLenDesc: 'アルファベット言語のラベルを省略するまでの最大文字数（既定: 20）。',
 		maxLenCjkName: '最大ラベル長（韓国語/日本語/中国語）',
 		maxLenCjkDesc: '非アルファベット言語（韓国語・日本語・中国語）のラベルを省略するまでの最大文字数（既定: 10）。',
+		maxNodesName: '最大表示ノード数',
+		maxNodesDesc: 'グラフに表示するノードの最大数（常に表示される現在のノートは除く）。被リンクより発リンクが優先されます。範囲: 1〜200（既定: 30）。',
 		toggleOutgoing: '発リンク',
 		toggleIncoming: '被リンク',
 		noNoteFound: 'ノートが見つかりません。',
