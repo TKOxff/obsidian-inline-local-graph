@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.9
+
+### New Features
+- **Separate label length for alphabet and non-alphabet languages**: Node label truncation now uses two independent limits — one for alphabet-based languages and one for Korean/Japanese/Chinese labels — so wide (full-width) characters no longer make nodes overly long. Added a new "Max label length (Korean/Japanese/Chinese)" slider (default: 10).
+- **Localized settings and UI (English, Korean, Japanese)**: The settings panel and graph controls are now translated based on the Obsidian display language, falling back to English for unsupported languages.
+
 ## 0.9.8
 
 ### New Features
