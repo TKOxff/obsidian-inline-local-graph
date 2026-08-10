@@ -31,7 +31,7 @@ const DEFAULT_SETTINGS: InlineGraphSettings = {
 	maxLabelLengthCJK: 10,
 	maxNodes: 30,
 	nodeFontSize: 14,
-	nodeShape: 'ellipse',
+	nodeShape: 'box',
 }
 
 // InlineGraph == InlineLocalGraph

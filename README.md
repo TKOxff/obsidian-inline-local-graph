@@ -94,7 +94,7 @@ Settings live under **Settings → Community plugins → Inline Local Graph**.
 
 | Setting | Description | Default |
 | --- | --- | --- |
-| Node shape | Ellipse, Box, Circle, Dot, or Text only. | Ellipse |
+| Node shape | Ellipse, Box, Circle, Dot, or Text only. | Box |
 | Node background color | Set the background color of graph nodes. | `#888888` |
 | Node font size | Set the font size of node labels. | 14 |
 | Truncate labels | Shorten long node labels with an ellipsis (...). | On |

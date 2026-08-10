@@ -164,7 +164,7 @@ export class InlineGraphView {
         const toLabel = (name: string) => truncate ? InlineGraphView.truncateLabel(name, maxLen, maxLenCJK) : name;
         const maxNodes = settings.maxNodes ?? 30;
         const nodeFontSize = settings.nodeFontSize ?? 14;
-        const nodeShape = settings.nodeShape ?? 'ellipse';
+        const nodeShape = settings.nodeShape ?? 'box';
         const showArrows = settings.showArrows ?? true;
         const nodeBgColor = settings.nodeBgColor ?? '#888888';
         const zoomScale = settings.zoomScale ?? 1.0;
