@@ -1,5 +1,7 @@
 # Inline Local Graph
 
+**English** | [한국어](./README.ko.md) | [日本語](./README.ja.md)
+
 ![GitHub downloads](https://img.shields.io/github/downloads/TKOxff/obsidian-inline-local-graph/total?logo=github&label=downloads)
 ![Obsidian downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%237c3aed&label=downloads&query=%24%5B%22inline-local-graph%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
 
