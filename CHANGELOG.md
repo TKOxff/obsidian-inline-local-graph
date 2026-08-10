@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.11
+
+### Documentation
+
+- **Donate button**: Added `fundingUrl` to the manifest, so a Donate button now appears on the plugin card in Obsidian's community plugin browser.
+- **README rewritten**: Added installation steps, a full settings reference, and a foreign-language vocabulary example (Japanese kanji — Korean — English) that better illustrates what the inline local graph is for.
+- **Translated README**: Korean (`README.ko.md`) and Japanese (`README.ja.md`) versions, linked from a language switcher at the top of each file.
+
+### Changes
+
+- **Default node shape is now Box** (was Ellipse). Users who never changed the setting will see box-shaped nodes after updating; pick a different shape under **Node shape** in the settings to keep the old look.
+
 ## 0.9.10
 
 ### New Features
