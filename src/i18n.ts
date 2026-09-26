@@ -1,3 +1,5 @@
+import { getLanguage } from 'obsidian';
+
 // Lightweight i18n for user-facing strings.
 // Currently supported: English (default / fallback), Korean, Japanese.
 // New languages can be added by extending the `translations` table below.
@@ -147,10 +149,9 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
 	},
 };
 
-// Obsidian stores the UI language in localStorage under the 'language' key.
-// An empty/unset value means English.
+// Obsidian's UI language code (e.g. 'en', 'ko', 'ja').
 function detectLocale(): Locale {
-	const lang = window.localStorage.getItem('language') ?? '';
+	const lang = getLanguage();
 	return (SUPPORTED_LOCALES as string[]).includes(lang) ? (lang as Locale) : 'en';
 }
 

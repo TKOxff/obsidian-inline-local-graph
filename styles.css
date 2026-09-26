@@ -45,6 +45,17 @@ If your plugin does not need CSS, delete this file.
     opacity: 1;
 }
 
+/* Extra gap between the toggles and the zoom buttons */
+.inline-graph-zoom-btn-first {
+    margin-left: 8px;
+}
+
+/* Number input for "Max displayed nodes" in the settings tab */
+.inline-graph-number-input {
+    width: 5em;
+    text-align: right;
+}
+
 /* Vertical divider style */
 .inline-graph-divider {
     width: 1px;

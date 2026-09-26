@@ -21,7 +21,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 		}
 
 		// ── Graph ──
-		containerEl.createEl('h6', { text: t('headingGraph') });
+		new Setting(containerEl).setName(t('headingGraph')).setHeading();
 
 		new Setting(containerEl)
 			.setName(t('showArrowsName'))
@@ -102,8 +102,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 				text.inputEl.type = 'number';
 				text.inputEl.min = String(MIN_NODES);
 				text.inputEl.max = String(MAX_NODES);
-				text.inputEl.style.width = '5em';
-				text.inputEl.style.textAlign = 'right';
+				text.inputEl.addClass('inline-graph-number-input');
 				text
 					.setValue(String(this.plugin.settings.maxNodes))
 					.onChange(async (value) => {
@@ -122,7 +121,7 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 			});
 
 		// ── Node Style ──
-		containerEl.createEl('h6', { text: t('headingNodeStyle') });
+		new Setting(containerEl).setName(t('headingNodeStyle')).setHeading();
 
 		new Setting(containerEl)
 			.setName(t('nodeShapeName'))
