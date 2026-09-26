@@ -37,14 +37,14 @@
 - [x] `npm run lint` — S1~S8 해당 규칙 위반 0건. 종료 코드는 1 (비범위 `no-unsafe-*` 6건, `prefer-setting-definitions` 1건 남음)
 - [x] `grep` — `src/`에 `document.createElement`, `.style.` 대입, `createEl('h`, `localStorage` 없음
 - [x] `grep` — `package.json`에 `builtin-modules` 없음, `vis-network` 범위 기호 없음, `manifest.json` author에 `@` 없음
-- [ ] `test-vault` 수동 확인 — 그래프 표시, Outgoing/Incoming 토글, 줌 버튼 간격, 노드 클릭 이동, 설정 탭 제목·숫자 입력칸 모양, ko/ja 표시 (사용자)
+- [x] `test-vault` 수동 확인 — 그래프 표시, Outgoing/Incoming 토글, 줌 버튼 간격, 노드 클릭 이동, 설정 탭 제목·숫자 입력칸 모양, ko/ja 표시 (사용자 확인 완료)
 
 ## 5. 마무리 (릴리즈 단계 — `/planfirst:task-release`)
 
-- [ ] `CHANGELOG.md` 0.9.12 작성 (영어)
-- [ ] 버전 bump — `package.json`, `manifest.json`, `versions.json` 수동 수정
-- [ ] `NOTES.md`가 있으면 승격 (없으면 건너뜀)
-- [ ] 태스크 폴더 `archived/`로 이동
+- [x] `CHANGELOG.md` 0.9.12 작성 (영어)
+- [x] 버전 bump — `package.json`, `manifest.json`, `versions.json` 수동 수정 (+ `package-lock.json`)
+- [x] `NOTES.md`가 있으면 승격 — 없음, 건너뜀
+- [x] 태스크 폴더 `archived/`로 이동
 - [ ] PR 생성 (`Closes #16`은 넣지 않음 — 검사 반영 확인 후 종료) 및 병합
 - [ ] 태그 `0.9.12` (v 없음) 및 GitHub 릴리즈 (main.js, manifest.json, styles.css)
 - [ ] 공개 검사 페이지 재확인 후 #16에 결과 코멘트 및 종료
