@@ -1,10 +1,10 @@
 {
 	"id": "inline-local-graph",
 	"name": "Inline Local Graph",
-	"version": "0.9.11",
-	"minAppVersion": "0.16.0",
+	"version": "0.9.12",
+	"minAppVersion": "1.8.7",
 	"description": "Visualize the local graph inline within your notes.",
-	"author": "TKOxff <tkoxff@gmail.com>",
+	"author": "TKOxff",
 	"authorUrl": "https://github.com/TKOxff",
 	"fundingUrl": "https://www.buymeacoffee.com/tkoxff",
 	"isDesktopOnly": false

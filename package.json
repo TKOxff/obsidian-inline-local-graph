@@ -1,13 +1,14 @@
 {
 	"name": "inline-local-graph",
-	"version": "0.9.11",
+	"version": "0.9.12",
 	"description": "Visualize the local graph inline within your notes.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
-		"setup-vault": "node scripts/setup-test-vault.mjs"
+		"setup-vault": "node scripts/setup-test-vault.mjs",
+		"lint": "eslint ."
 	},
 	"keywords": [
 		"obsidian",
@@ -17,19 +18,21 @@
 		"inline local graph",
 		"plugin"
 	],
-	"author": "TKOxff <tkoxff@gmail.com>",
+	"author": "TKOxff",
 	"license": "MIT",
 	"devDependencies": {
+		"@eslint/js": "9.39.5",
+		"@eslint/json": "0.14.0",
 		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
-		"builtin-modules": "3.3.0",
 		"esbuild": "0.17.3",
-		"obsidian": "latest",
+		"eslint": "9.39.5",
+		"eslint-plugin-obsidianmd": "0.4.2",
+		"obsidian": "1.12.3",
 		"tslib": "2.4.0",
-		"typescript": "4.7.4"
+		"typescript": "5.9.3",
+		"typescript-eslint": "8.70.1"
 	},
 	"dependencies": {
-		"vis-network": "^10.0.1"
+		"vis-network": "10.0.1"
 	}
 }

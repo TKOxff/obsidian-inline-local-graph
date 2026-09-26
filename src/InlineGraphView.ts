@@ -10,7 +10,7 @@ export class InlineGraphView {
     private static getSpringLength(scale: number) { return Math.max(1, 80 / scale); }
     // Detects CJK / full-width characters so English and non-English labels can use different length limits.
     private static hasWideChar(label: string) {
-        return /[ᄀ-ᇿ　-〿぀-ヿ一-鿿가-힣＀-￯]/.test(label);
+        return /[\u1100-\u11FF\u3000-\u303F\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7A3\uFF00-\uFFEF]/.test(label);
     }
 
     // Simple truncation: pick the max by language (CJK-containing labels use maxCjk), then cut and append '...'.
@@ -20,17 +20,17 @@ export class InlineGraphView {
     }
 
     private createZoomControls(networkRef: { current: Network | null }, container: HTMLElement): HTMLDivElement {
-        const controlsDiv = document.createElement('div');
+        const controlsDiv = createDiv();
         controlsDiv.className = 'inline-graph-controls';
 
         // Links toggle
-        const linksLabel = document.createElement('label');
+        const linksLabel = createEl('label');
         linksLabel.className = 'inline-graph-switch-label';
 
-        const linksText = document.createElement('span');
+        const linksText = createSpan();
         linksText.textContent = t('toggleOutgoing');
 
-        const linksSlider = document.createElement('span');
+        const linksSlider = createSpan();
         linksSlider.className = 'inline-graph-switch-slider';
 
         const updateLinksUI = () => {
@@ -54,13 +54,13 @@ export class InlineGraphView {
         controlsDiv.appendChild(linksLabel);
 
         // Backlinks toggle
-        const backlinksLabel = document.createElement('label');
+        const backlinksLabel = createEl('label');
         backlinksLabel.className = 'inline-graph-switch-label';
 
-        const backlinksText = document.createElement('span');
+        const backlinksText = createSpan();
         backlinksText.textContent = t('toggleIncoming');
 
-        const backlinksSlider = document.createElement('span');
+        const backlinksSlider = createSpan();
         backlinksSlider.className = 'inline-graph-switch-slider';
 
         const updateBacklinksUI = () => {
@@ -83,13 +83,12 @@ export class InlineGraphView {
         backlinksLabel.appendChild(backlinksSlider);
         controlsDiv.appendChild(backlinksLabel);
 
-        const zoomOutBtn = document.createElement('button');
-        zoomOutBtn.className = 'inline-graph-zoom-btn';
-        zoomOutBtn.style.marginLeft = '8px';
+        const zoomOutBtn = createEl('button');
+        zoomOutBtn.className = 'inline-graph-zoom-btn inline-graph-zoom-btn-first';
         zoomOutBtn.textContent = '-';
         zoomOutBtn.title = 'Zoom out';
 
-        const zoomInBtn = document.createElement('button');
+        const zoomInBtn = createEl('button');
         zoomInBtn.className = 'inline-graph-zoom-btn';
         zoomInBtn.textContent = '+';
         zoomInBtn.title = 'Zoom in';
@@ -276,7 +275,7 @@ export class InlineGraphView {
         }
 
         // Wrapper for graph and controls
-        const wrapperDiv = document.createElement('div');
+        const wrapperDiv = createDiv();
         wrapperDiv.className = 'inline-graph-wrapper';
 
         // Prepare a reference object for the network instance
@@ -286,7 +285,7 @@ export class InlineGraphView {
         const controlsDiv = this.createZoomControls(networkRef, container);
 
         // Graph container
-        const graphDiv = document.createElement('div');
+        const graphDiv = createDiv();
         graphDiv.className = 'inline-graph-vis';
 
         // Hover logic: show controls only when mouse is over wrapperDiv

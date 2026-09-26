@@ -110,7 +110,7 @@ export default class InlineGraphPlugin extends Plugin {
 		// Check if graph container already exists to avoid duplication
 		let graphContainer = parentEl.querySelector<HTMLElement>('.inline-graph-container');
 		if (!graphContainer) {
-			graphContainer = document.createElement('div');
+			graphContainer = createDiv();
 			graphContainer.className = 'inline-graph-container';
 			parentEl.appendChild(graphContainer);
 		}
