@@ -18,22 +18,21 @@
 		"inline local graph",
 		"plugin"
 	],
-	"author": "TKOxff <tkoxff@gmail.com>",
+	"author": "TKOxff",
 	"license": "MIT",
 	"devDependencies": {
 		"@eslint/js": "9.39.5",
 		"@eslint/json": "0.14.0",
 		"@types/node": "^16.11.6",
-		"builtin-modules": "3.3.0",
 		"esbuild": "0.17.3",
 		"eslint": "9.39.5",
 		"eslint-plugin-obsidianmd": "0.4.2",
-		"obsidian": "latest",
+		"obsidian": "1.12.3",
 		"tslib": "2.4.0",
 		"typescript": "5.9.3",
 		"typescript-eslint": "8.70.1"
 	},
 	"dependencies": {
-		"vis-network": "^10.0.1"
+		"vis-network": "10.0.1"
 	}
 }
