@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.9.12
+
+### Changes
+
+- **Minimum Obsidian version is now 1.8.7** (was 0.16.0). The plugin now uses Obsidian's `getLanguage()` API to pick the settings language. Users on older Obsidian versions can keep using 0.9.11.
+
+### Maintenance
+
+- **Community directory review fixes**: Resolved the issues reported by Obsidian's automated plugin review (#16). The author field no longer contains an email address; UI elements are created with Obsidian's DOM helpers; inline styles moved to `styles.css`; settings section headings use Obsidian's built-in heading style. There are no functional changes to the graph.
+- **Build tooling**: Added `eslint-plugin-obsidianmd` (`npm run lint`), upgraded TypeScript to 5.9, committed `package-lock.json`, pinned dependency versions, and replaced the `builtin-modules` package with Node's built-in module list.
+
 ## 0.9.11
 
 ### Documentation
