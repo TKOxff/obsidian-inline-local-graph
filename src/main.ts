@@ -2,7 +2,10 @@ import { Plugin, debounce, MarkdownView } from 'obsidian';
 import { InlineGraphView } from './InlineGraphView';
 import { InlineGraphSettingTab } from './InlineGraphSettingTab';
 
+export type GraphPosition = 'top' | 'bottom';
+
 export interface InlineGraphSettings {
+	graphPosition: GraphPosition;
 	showArrows: boolean;
 	nodeBgColor: string;
 	showGraphBorder: boolean;
@@ -19,6 +22,7 @@ export interface InlineGraphSettings {
 }
 
 const DEFAULT_SETTINGS: InlineGraphSettings = {
+	graphPosition: 'bottom',
 	showArrows: true,
 	nodeBgColor: '#888888',
 	showGraphBorder: false,
@@ -94,26 +98,45 @@ export default class InlineGraphPlugin extends Plugin {
 			return;
 		}
 
-		let parentEl: Element | null = null;
-		const mode = view.getMode();
+		const isTop = this.settings.graphPosition === 'top';
+		let scopeEl: Element | null; // where an existing container may be found
+		let parentEl: Element | null;
+		let anchorEl: Element | null = null; // top only: the container goes right before this
 
-		if (mode === 'preview') {
-			parentEl = view.contentEl.querySelector('.markdown-preview-sizer');
+		if (view.getMode() === 'preview') {
+			const sizerEl = view.contentEl.querySelector('.markdown-preview-sizer');
+			scopeEl = sizerEl?.parentElement ?? null;
+			// The reading view virtualizes the sizer's children (the title header included),
+			// so a top graph lives outside the sizer to keep its place while scrolling.
+			parentEl = isTop ? scopeEl : sizerEl;
+			anchorEl = isTop ? sizerEl : null;
 		} else { // 'source' or 'live'
-			parentEl = view.contentEl.querySelector('.cm-sizer');
+			scopeEl = parentEl = view.contentEl.querySelector('.cm-sizer');
 		}
 
-		if (!parentEl) {
+		if (!scopeEl || !parentEl) {
 			return;
 		}
 
-		// Check if graph container already exists to avoid duplication
-		let graphContainer = parentEl.querySelector<HTMLElement>('.inline-graph-container');
+		// Reuse the existing container to avoid duplication; it moves when the position changes
+		let graphContainer = scopeEl.querySelector<HTMLElement>('.inline-graph-container');
+		const isNew = !graphContainer;
 		if (!graphContainer) {
 			graphContainer = createDiv();
 			graphContainer.className = 'inline-graph-container';
+		}
+
+		if (isTop) {
+			// Obsidian re-prepends the inline title when a mode is shown, so check the order every time
+			if (!anchorEl) anchorEl = Array.from(parentEl.children).find(el => el !== graphContainer) ?? null;
+			if (graphContainer.parentElement !== parentEl || graphContainer.nextElementSibling !== anchorEl) {
+				parentEl.insertBefore(graphContainer, anchorEl);
+			}
+		} else if (isNew || graphContainer.hasClass('is-top')) {
 			parentEl.appendChild(graphContainer);
 		}
+		graphContainer.toggleClass('is-top', isTop);
+		graphContainer.toggleClass('is-bottom', !isTop);
 
 		// Apply styles based on settings
 		if (this.settings.showGraphBorder) {

@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### New Features
+
+- **Graph position**: Added a **Graph position** setting to show the graph at the top of the note (above the title) instead of the bottom (#17). The default stays at the bottom.
+
+### Changes
+
+- **No more large gap in editing view**: When the graph is at the bottom, it now follows the note text directly in Live Preview and Source mode, instead of sitting below a large empty space (about half the window height).
+
 ## 0.9.12
 
 ### Changes

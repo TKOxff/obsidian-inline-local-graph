@@ -82,6 +82,29 @@ If your plugin does not need CSS, delete this file.
     margin-top: 2em;
 }
 
+/* Graph position: top (above the note title) */
+.inline-graph-container.is-top {
+    margin-top: 0;
+    margin-bottom: 2em;
+}
+
+/* In reading view the top graph sits outside the sizer, so apply the readable line width here */
+.markdown-preview-view.is-readable-line-width > .inline-graph-container {
+    max-width: var(--file-line-width);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Editing view, graph at the bottom: drop the space CodeMirror leaves below the text
+   (flex-grow fill + "scroll past end" padding) so the graph follows the text directly */
+.cm-sizer:has(> .inline-graph-container.is-bottom) > .cm-contentContainer {
+    flex-grow: 0;
+}
+
+.cm-sizer:has(> .inline-graph-container.is-bottom) > .cm-contentContainer > .cm-content {
+    padding-bottom: 0 !important;
+}
+
 /* Whether to show graph border */
 .inline-graph-container.show-border {
     border: 1px solid var(--background-modifier-border);

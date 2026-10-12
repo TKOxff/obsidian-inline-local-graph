@@ -11,6 +11,8 @@ const SUPPORTED_LOCALES: Locale[] = ['en', 'ko', 'ja'];
 export type TranslationKey =
 	| 'settingsLoadError'
 	| 'headingGraph'
+	| 'graphPositionName' | 'graphPositionDesc'
+	| 'positionTop' | 'positionBottom'
 	| 'showArrowsName' | 'showArrowsDesc'
 	| 'showBorderName' | 'showBorderDesc'
 	| 'showOutgoingName' | 'showOutgoingDesc'
@@ -33,6 +35,10 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
 	en: {
 		settingsLoadError: 'Error: plugin settings could not be loaded. Please try reloading the plugin.',
 		headingGraph: 'Graph',
+		graphPositionName: 'Graph position',
+		graphPositionDesc: 'Show the graph at the top of the note (above the title) or at the bottom.',
+		positionTop: 'Top',
+		positionBottom: 'Bottom',
 		showArrowsName: 'Show arrows on edges',
 		showArrowsDesc: 'Toggle arrow display on graph edges.',
 		showBorderName: 'Show graph border',
@@ -72,6 +78,10 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
 	ko: {
 		settingsLoadError: '오류: 플러그인 설정을 불러올 수 없습니다. 플러그인을 다시 로드해 주세요.',
 		headingGraph: '그래프',
+		graphPositionName: '그래프 위치',
+		graphPositionDesc: '그래프를 노트 상단(제목 위) 또는 하단에 표시합니다.',
+		positionTop: '상단',
+		positionBottom: '하단',
 		showArrowsName: '엣지에 화살표 표시',
 		showArrowsDesc: '그래프 엣지에 화살표를 표시합니다.',
 		showBorderName: '그래프 테두리 표시',
@@ -111,6 +121,10 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
 	ja: {
 		settingsLoadError: 'エラー: プラグイン設定を読み込めませんでした。プラグインを再読み込みしてください。',
 		headingGraph: 'グラフ',
+		graphPositionName: 'グラフの位置',
+		graphPositionDesc: 'グラフをノートの上部（タイトルの上）または下部に表示します。',
+		positionTop: '上部',
+		positionBottom: '下部',
 		showArrowsName: '辺に矢印を表示',
 		showArrowsDesc: 'グラフの辺に矢印を表示するかを切り替えます。',
 		showBorderName: 'グラフの枠線を表示',
