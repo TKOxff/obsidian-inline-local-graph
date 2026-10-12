@@ -24,6 +24,21 @@ export class InlineGraphSettingTab extends PluginSettingTab {
 		new Setting(containerEl).setName(t('headingGraph')).setHeading();
 
 		new Setting(containerEl)
+			.setName(t('graphPositionName'))
+			.setDesc(t('graphPositionDesc'))
+			.addDropdown(dropdown => dropdown
+				.addOptions({
+					bottom: t('positionBottom'),
+					top: t('positionTop')
+				})
+				.setValue(this.plugin.settings.graphPosition)
+				.onChange(async (value) => {
+					this.plugin.settings.graphPosition = value === 'top' ? 'top' : 'bottom';
+					await this.plugin.saveSettings();
+					this.plugin.updateGraphs();
+				}));
+
+		new Setting(containerEl)
 			.setName(t('showArrowsName'))
 			.setDesc(t('showArrowsDesc'))
 			.addToggle(toggle => toggle

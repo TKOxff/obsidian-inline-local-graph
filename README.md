@@ -35,6 +35,7 @@ into view — no side panel, no context switch.
 A custom local graph focused on clarity, displaying links and backlinks without flashy visual
 effects, making it easy to understand and navigate between notes.
 
+- **Graph position** — show the graph at the top of the note (above the title) or at the bottom
 - **Outgoing and incoming links** — toggle each independently from the control bar or settings
 - **Node styling** — shape, background color, and font size
 - **Label truncation** — with separate limits for alphabet and CJK (Korean/Japanese/Chinese) labels,
@@ -82,6 +83,7 @@ Settings live under **Settings → Community plugins → Inline Local Graph**.
 
 | Setting | Description | Default |
 | --- | --- | --- |
+| Graph position | Show the graph at the top of the note (above the title) or at the bottom. | Bottom |
 | Show arrows on edges | Toggle arrow display on graph edges. | On |
 | Show graph border | Toggle the border around the graph container. | Off |
 | Show outgoing links | Toggle whether to display outgoing links in the graph. | On |
