@@ -40,6 +40,6 @@
 - [x] 버전 1.0.0 (사용자 결정) — `package.json`, `package-lock.json`, `manifest.json`, `versions.json` 수동 수정, CHANGELOG `## 1.0.0`
 - [x] `NOTES.md` 승격 — 없음, 건너뜀
 - [x] 태스크 폴더 `archived/`로 이동
-- [ ] PR 생성 (`Closes #17`) 및 병합
-- [ ] 태그 `1.0.0` (v 없음) 및 GitHub 릴리즈 (main.js, manifest.json, styles.css)
-- [ ] #17에 결과 코멘트
+- [x] PR #22 생성 (`Closes #17`) 및 병합 (사용자 병합, `8019b7a`) — #17 자동 종료
+- [x] 태그 `1.0.0` (v 없음) 및 GitHub 릴리즈 (main.js, manifest.json, styles.css) — https://github.com/TKOxff/obsidian-inline-local-graph/releases/tag/1.0.0
+- [x] #17에 결과 코멘트
