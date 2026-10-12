@@ -32,10 +32,14 @@
 
 - [x] esbuild 번들 성공 (node 없음 → 네이티브 esbuild, PLAN 4장)
 - [x] 격리 인스턴스 측정 — 편집 하단 간격 515px→32px, 편집 상단 그래프→제목 32px, 읽기 상단 긴 노트 6개 지점 화면 덮임·그래프 1개, 위치 전환 시 이동·중복 없음, 모드/노트 전환·토글 컨테이너 1개, 대기 중 재렌더 0회
-- [ ] 사용자: `npm run build`, `npm run lint` (tsc·eslint는 사용자 환경에서만 가능)
-- [ ] 사용자: `test-vault` 수동 확인
+- [x] `npm run build` 성공, `npm run lint` 새 위반 0건 (기존 비범위 7건 그대로: `no-unsafe-*` 6, `prefer-setting-definitions` 1) — 사용자 승인으로 brew로 node 26.11.1 설치 후 실행
+- [x] 사용자: `test-vault` 수동 확인 — "잘 동작하는 것 확인, 제목 위도 문제 없음"
 
-## 6. 마무리 (사용자 확인 후 지시 대기)
+## 6. 마무리 (릴리즈 — 사용자 지시 "이대로 진행해", 버전 1.0.0)
 
-- [ ] 버전 결정·bump, CHANGELOG 버전 확정
-- [ ] PR (`Closes #17`), 태그, 릴리즈, 이슈 코멘트
+- [x] 버전 1.0.0 (사용자 결정) — `package.json`, `package-lock.json`, `manifest.json`, `versions.json` 수동 수정, CHANGELOG `## 1.0.0`
+- [x] `NOTES.md` 승격 — 없음, 건너뜀
+- [x] 태스크 폴더 `archived/`로 이동
+- [ ] PR 생성 (`Closes #17`) 및 병합
+- [ ] 태그 `1.0.0` (v 없음) 및 GitHub 릴리즈 (main.js, manifest.json, styles.css)
+- [ ] #17에 결과 코멘트
